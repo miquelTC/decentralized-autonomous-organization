@@ -6,6 +6,7 @@ const getDAO = (networkId) => {
   try {
     return new web3.eth.Contract(DAO.abi, DAO.networks[networkId].address);
   } catch(error) {
+    console.log(error);
     return;
   }
 };

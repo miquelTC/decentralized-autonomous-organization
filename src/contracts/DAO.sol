@@ -10,7 +10,7 @@ pragma solidity ^0.8.0;
  * 5. execute successful investment proposals (i.e send money)
  */
 
-contract DAO {
+contract DAO {  
   struct Proposal {
     uint id;
     string name;
@@ -82,27 +82,27 @@ contract DAO {
 
   function vote(uint proposalId) external onlyInvestors() {
     Proposal storage proposal = proposals[proposalId];
-    require(votes[msg.sender][proposalId] ==false, 'investor can only vote once per proposal');
+    require(votes[msg.sender][proposalId] == false, 'investor can only vote once per proposal');
     require(block.timestamp < proposal.end, 'can only vote until proposal end date');
     votes[msg.sender][proposalId] = true;
-    proposal.votes +=shares[msg.sender];
+    proposal.votes += shares[msg.sender];
   }
 
   function executeProposal(uint proposalId) external onlyAdmin {
     Proposal storage proposal = proposals[proposalId];
     require(block.timestamp >= proposal.end, 'the voting period is still not over');
-    require(proposal.executed == false, 'the proposal was already executed');
-    require((proposal.votes / totalShares) * 100 >= quorum, 'cannot execute proposal with votes # below quorum');
+    require(proposal.executed == false, 'cannot execute proposal already executed');
+    require((proposal.votes * 100 / totalShares) >= quorum, 'cannot execute proposal with votes # below quorum');
     _transferEther(proposal.amount, proposal.recipient);
     proposal.executed = true;
   }
 
-  function withdrawEther(uint amount, address payable to) external onlyAdmin() {    
+  function withdrawEther(uint amount, address payable to) external onlyAdmin {    
     _transferEther(amount, to);
   }
 
   function _transferEther(uint amount, address payable to) internal {
-    require(availableFunds >= amount);
+    require(availableFunds >= amount, 'not enough availableFunds');
     availableFunds -= amount;
     to.transfer(amount);
   }

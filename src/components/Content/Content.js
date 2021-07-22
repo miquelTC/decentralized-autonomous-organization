@@ -1,4 +1,3 @@
-import { propTypes } from 'react-bootstrap/esm/Image';
 import img from '../../img/dao-img.png';
 
 const Content = (props) => {
@@ -15,17 +14,18 @@ const Content = (props) => {
     await props.DAO.methods.contribute().send({from: props.account, value: amount});
     await props.updateShares();  };
 
-  const redeemShares = async(event) => {
+  const redeemShare = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
-    await props.DAO.methods.redeemShares(amount).send({from: props.account});
+    await props.DAO.methods.redeemShare(amount).send({from: props.account});
     await props.updateShares();
   };
 
-  const transferShares = async(event) => {
+  const transferShare = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
-    await props.DAO.methods.redeemShares(amount).send({from: props.account});
+    const to = event.target.elements[1].value;
+    await props.DAO.methods.transferShare(amount, to).send({from: props.account});
     await props.updateShares();
   };
 
@@ -38,20 +38,20 @@ const Content = (props) => {
     await props.updateProposals();
   };
 
-  const vote = async(ballotId) => {
-    await props.DAO.methods.vote(ballotId).send({from: props.account});
+  const vote = async(event) => {
+    await props.DAO.methods.vote(event.target.value).send({from: props.account});
     await props.updateProposals();
   };
 
-  const executeProposal = async(proposalId) => {
-    await props.DAO.methods.executeProposal(proposalId).send({from: props.account});
+  const executeProposal = async(event) => {
+    await props.DAO.methods.executeProposal(event.target.value).send({from: props.account});
     await props.updateProposals();
   };
 
-  const isFinished = async(proposal) => {
+  const isFinished = (proposal) => {
     const now = new Date().getTime();
     const proposalEnd =  new Date(parseInt(proposal.end) * 1000);
-    return (proposalEnd > now) > 0 ? false : true;
+    return ((proposalEnd - now) > 0 ? false : true);    
   }
   
   return(
@@ -101,7 +101,7 @@ const Content = (props) => {
       <div className="row">
         <div className="col-sm-12">
           <h2>Redeem shares</h2>
-          <form onSubmit={redeemShares}>
+          <form onSubmit={redeemShare}>
             <div className="form-group">
               <label htmlFor="amount">Amount</label>
               <input type="text" className="form-control" id="amount" />
@@ -116,7 +116,7 @@ const Content = (props) => {
       <div className="row">
         <div className="col-sm-12">
           <h2>Transfer shares</h2>
-          <form onSubmit={transferShares}>
+          <form onSubmit={transferShare}>
             <div className="form-group">
               <label htmlFor="amount">Amount</label>
               <input type="text" className="form-control" id="amount" />
@@ -179,8 +179,9 @@ const Content = (props) => {
                     {isFinished(proposal) ? 'Vote finished' : (
                       proposal.hasVoted ? 'You already voted' : ( 
                       <button 
-                        onClick={vote(proposal.id)}
-                        type="submit" 
+                        value={proposal.id}  
+                        onClick={vote}
+                        type="button" 
                         className="btn btn-primary">
                         Vote
                       </button>
@@ -193,7 +194,8 @@ const Content = (props) => {
                     {proposal.executed ? 'Yes' : (
                       props.admin.toLowerCase() === props.account.toLowerCase() ? (
                         <button 
-                          onClick={e => executeProposal(proposal.id)}
+                          value={proposal.id}  
+                          onClick={executeProposal}
                           type="submit" 
                           className="btn btn-primary">
                           Execute

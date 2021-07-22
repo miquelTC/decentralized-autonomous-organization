@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import web3 from './instances/connection';
 import getDAO from './instances/contracts';
 import Navbar from './components/Layout/Navbar';
 import Content from './components/Content/Content';
+import Spinner from './components/Layout/Spinner';
 
 function App() {
   const [DAO, setDAO] = useState(null);
@@ -67,19 +68,12 @@ function App() {
 
   const showContent = web3 && account && DAO && admin;
 
-  useEffect(() => {    
-    if(showContent) {
-      updateShares();
-      updateProposals();
-    }
-  }, [showContent]);
-
-  const updateShares = async() => {
+  const updateShares = useCallback(async() => {
     const shares = await DAO.methods.shares(account).call();
     setShares(shares);
-  };
+  }, [DAO, account]);
 
-  const updateProposals = async() => {
+  const updateProposals = useCallback(async() => {
     const nextProposalId = parseInt(await DAO.methods.nextProposalId().call());
     const proposals = [];
     for(let i = 0; i < nextProposalId; i++) { 
@@ -90,39 +84,19 @@ function App() {
       proposals.push({...proposal, hasVoted});
     }
     setProposals(proposals);
-  };
+  }, [DAO, account]);
 
-  // async function executeProposal(proposalId) {
-  // };
-
-  // async function withdrawEther(e) {
-  // };
-
-  // async function contribute(e) {
-  // };
-
-  // async function redeemShares(e) {
-  // };
-
-  // async function transferShares(e) {
-  // };
-
-  // async function vote(ballotId) {
-  // };
-
-  // async function createProposal(e) {
-  // };
-
-  // function isFinished(proposal) {
-  //   const now = new Date().getTime();
-  //   const proposalEnd =  new Date(parseInt(proposal.end) * 1000);
-  //   return (proposalEnd > now) > 0 ? false : true;
-  // }
+  useEffect(() => {    
+    if(showContent) {
+      updateShares();
+      updateProposals();
+    }
+  }, [showContent, updateShares, updateProposals]);
 
   return (
     <React.Fragment>
       <Navbar account={account} web3={web3} setAccount={setAccount} />
-      {showContent && <Content account={account} DAO={DAO} shares={shares} admin={admin} updateShares={updateShares} proposals={proposals} />}
+      {showContent && <Content account={account} DAO={DAO} shares={shares} admin={admin} updateShares={updateShares} proposals={proposals} updateProposals={updateProposals} />}
     </React.Fragment>
   );
 }

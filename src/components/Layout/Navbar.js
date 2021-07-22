@@ -1,5 +1,5 @@
   
-import logo from '../../img/logo.png'
+import logo from '../../img/dao-img.png'
 
 const Navbar = (props) => {
   const connectWalletHandler = async() => {
@@ -18,7 +18,7 @@ const Navbar = (props) => {
   return (
     <nav className="navbar navbar-dark bg-primary p-0">
       <a className="navbar-brand" href="/#">
-        <img src={logo} width="40" height="40" className="align-center" alt="logo" />
+        <img src={logo} width="30" height="30" className="align-center" alt="logo" />
         mTC DAO
       </a>
       <ul className="navbar-nav px-3">

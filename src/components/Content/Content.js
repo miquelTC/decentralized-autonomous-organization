@@ -1,3 +1,5 @@
+import { ProgressBar } from "react-bootstrap";
+
 const Content = (props) => {
   const withdrawEther = async(event) => {
     event.preventDefault();
@@ -50,106 +52,133 @@ const Content = (props) => {
     const now = new Date().getTime();
     const proposalEnd =  new Date(parseInt(proposal.end) * 1000);
     return ((proposalEnd - now) > 0 ? false : true);    
-  }
+  }  
   
+  const now = 60;
   return(
     <div className="container">
-      <p>Shares: {props.shares}</p>
+            <h4 className="text-white mt-4">My Shares: {props.shares}</h4>
+      <div className="col-2">
+        <ProgressBar now={now} label={`${now}%`} />;
+      </div>
+
+
 
       {props.account.toLowerCase() === props.admin.toLowerCase() ? (
         <>
-        <div className="row">
-          <div className="col-sm-12">
-            <h2>Withdraw ether</h2>
+        <div className="card border-primary text-white bg-secondary mb-4">
+          <div className="card-header">
+            <h2 className="text-center">Withdraw ether</h2>
+          </div>
+          <div className="card-body">            
             <form onSubmit={withdrawEther}>
-              <div className="form-group">
-                <label htmlFor="amount">Amount</label>
-                <input type="text" className="form-control" id="amount" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="to">To</label>
-                <input type="text" className="form-control" id="to" />
+              <div className="row">
+                <div className="form-group col-md-6 mb-3">
+                  {/* <label htmlFor="amount">Amount</label> */}
+                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                </div>
+                <div className="form-group col-md-6 mb-3">
+                  {/* <label htmlFor="to">To</label> */}
+                  <input type="text" className="form-control" id="to" placeholder="Recipient's address..." />
+                </div>                
               </div>
               <button type="submit" className="btn btn-primary">Submit</button>
             </form>
+            
           </div>
-        </div>
-      <hr />
+
+          </div>
+        
+      
       </>
       ) : null}
 
-      <div className="row">
-        <div className="col-sm-12">
-          <h2>Contribute</h2>
-          <form onSubmit={contribute}>
-            <div className="form-group">
-              <label htmlFor="amount">Amount</label>
-              <input type="text" className="form-control" id="amount" />
+      
+      <div className="row">      
+        <div className="col-sm-4">
+          <div className="card border-primary text-white bg-secondary mb-4">
+            <div className="card-header">
+              <h2 className="text-center">Contribute</h2>
             </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
-          </form>
+            <div className="card-body">
+              <form onSubmit={contribute}>
+                <div className="form-group mb-3">
+                  {/* <label htmlFor="amount">Amount</label> */}
+                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div>  
+
+        <div className="col-sm-4">
+          <div className="card border-primary text-white bg-secondary mb-4">
+            <div className="card-header">
+              <h2 className="text-center">Transfer shares</h2>
+            </div>
+            <div className="card-body">
+              <form onSubmit={transferShare}>
+                <div className="form-group mb-3">
+                  {/* <label htmlFor="amount">Amount</label> */}
+                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
         </div>
+
+        <div className="col-sm-4">
+          <div className="card border-primary text-white bg-secondary mb-4">
+            <div className="card-header">
+              <h2 className="text-center">Redeem shares</h2>
+            </div>
+            <div className="card-body">
+              <form onSubmit={redeemShare}>
+                <div className="form-group mb-3">
+                  {/* <label htmlFor="amount">Amount</label> */}
+                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div> 
       </div>
 
-      <hr/>
-
-      <div className="row">
-        <div className="col-sm-12">
-          <h2>Redeem shares</h2>
-          <form onSubmit={redeemShare}>
-            <div className="form-group">
-              <label htmlFor="amount">Amount</label>
-              <input type="text" className="form-control" id="amount" />
-            </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
-          </form>
+        
+      <div className="card border-primary text-white bg-secondary mb-4">
+        <div className="card-header">
+          <h2 className="text-center">Create proposal</h2>
         </div>
-      </div>
-
-      <hr/>
-
-      <div className="row">
-        <div className="col-sm-12">
-          <h2>Transfer shares</h2>
-          <form onSubmit={transferShare}>
-            <div className="form-group">
-              <label htmlFor="amount">Amount</label>
-              <input type="text" className="form-control" id="amount" />
-            </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
-          </form>
-        </div>
-      </div>
-
-      <hr/>
-
-      <div className="row">
-        <div className="col-sm-12">
-          <h2>Create proposal</h2>
+        <div className="card-body">  
           <form onSubmit={createProposal}>
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <input type="text" className="form-control" id="name" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="amount">Amount</label>
-              <input type="text" className="form-control" id="amount" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="recipient">Recipient</label>
-              <input type="text" className="form-control" id="recipient" />
+            <div className="row">
+              <div className="form-group col-md-4 mb-3">
+                {/* <label htmlFor="name">Name</label> */}
+                <input type="text" className="form-control" id="name" placeholder="Proposal name..." />
+              </div>
+              <div className="form-group col-md-4 mb-3">
+                {/* <label htmlFor="amount">Amount</label> */}
+                <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+              </div>
+              <div className="form-group col-md-4 mb-3">
+                {/* <label htmlFor="recipient">Recipient</label> */}
+                <input type="text" className="form-control" id="recipient" placeholder="Recipient's address..." />
+              </div>              
             </div>
             <button type="submit" className="btn btn-primary">Submit</button>
-          </form>
-        </div>
+          </form> 
+        </div>         
       </div>
 
-      <hr/>
-
-      <div className="row">
-        <div className="col-sm-12">
-          <h2>Proposals</h2>
-          <table className="table">
+      <div className="card border-primary text-white bg-secondary mb-4">
+        <div className="card-header">
+          <h2 className="text-center">Proposals</h2>
+        </div>
+        <div className="card-body">
+          <table className="table text-white">
             <thead>
               <tr>
                 <th>Id</th>

@@ -1,5 +1,3 @@
-import img from '../../img/dao-img.png';
-
 const Content = (props) => {
   const withdrawEther = async(event) => {
     event.preventDefault();
@@ -56,9 +54,6 @@ const Content = (props) => {
   
   return(
     <div className="container">
-      <h1 className="text-center">mTC DAO</h1>
-      <img src={img} className="rounded mx-auto d-block mt-3" width="120" height="120" alt="logo" />
-
       <p>Shares: {props.shares}</p>
 
       {props.account.toLowerCase() === props.admin.toLowerCase() ? (
@@ -209,10 +204,7 @@ const Content = (props) => {
           </table>
         </div>
       </div>
-
     </div>
-
-    
   );
 };
 

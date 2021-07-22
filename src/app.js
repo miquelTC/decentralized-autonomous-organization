@@ -5,6 +5,7 @@ import getDAO from './instances/contracts';
 import Navbar from './components/Layout/Navbar';
 import Content from './components/Content/Content';
 import Spinner from './components/Layout/Spinner';
+import img from './img/dao-img.png';
 
 function App() {
   const [DAO, setDAO] = useState(null);
@@ -96,7 +97,21 @@ function App() {
   return (
     <React.Fragment>
       <Navbar account={account} web3={web3} setAccount={setAccount} />
-      {showContent && <Content account={account} DAO={DAO} shares={shares} admin={admin} updateShares={updateShares} proposals={proposals} updateProposals={updateProposals} />}
+      <h1 className="text-center">mTC DAO</h1>
+      <img src={img} className="rounded mx-auto d-block mt-3" width="120" height="120" alt="logo" />
+      {showContent && !isLoading && 
+        <Content 
+          account={account} 
+          DAO={DAO} 
+          shares={shares} 
+          admin={admin} 
+          updateShares={updateShares} 
+          proposals={proposals} 
+          updateProposals={updateProposals} 
+          isLoading={isLoading}  
+        />
+      }
+      {!showContent && isLoading && <Spinner />}
     </React.Fragment>
   );
 }

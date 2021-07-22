@@ -1,6 +1,10 @@
 const Spinner = () => {
   return(
-    <div className="spinner-border text-dark text-center"></div>
+    <div className="text-center">
+      <div className="spinner-border text-primary mt-3"/>
+      <br/>
+      Loading Transaction...    
+    </div>
   );
 };
 

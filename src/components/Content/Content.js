@@ -54,15 +54,14 @@ const Content = (props) => {
     return ((proposalEnd - now) > 0 ? false : true);    
   }  
   
-  const now = 60;
+  const now = ((props.shares / props.totalShares) * 100).toFixed(1);
+
   return(
     <div className="container">
-            <h4 className="text-white mt-4">My Shares: {props.shares}</h4>
+      <h4 className="text-white mt-4">My Shares: {props.shares}</h4>
       <div className="col-2">
         <ProgressBar now={now} label={`${now}%`} />;
       </div>
-
-
 
       {props.account.toLowerCase() === props.admin.toLowerCase() ? (
         <>
@@ -79,7 +78,7 @@ const Content = (props) => {
                 </div>
                 <div className="form-group col-md-6 mb-3">
                   {/* <label htmlFor="to">To</label> */}
-                  <input type="text" className="form-control" id="to" placeholder="Recipient's address..." />
+                  <input type="text" className="form-control" id="to" placeholder="To..." />
                 </div>                
               </div>
               <button type="submit" className="btn btn-primary">Submit</button>
@@ -119,9 +118,15 @@ const Content = (props) => {
             </div>
             <div className="card-body">
               <form onSubmit={transferShare}>
-                <div className="form-group mb-3">
-                  {/* <label htmlFor="amount">Amount</label> */}
-                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                <div className="row">
+                  <div className="form-group col-md-6 mb-3">
+                    {/* <label htmlFor="amount">Amount</label> */}
+                    <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                  </div>
+                  <div className="form-group col-md-6 mb-3">
+                    {/* <label htmlFor="amount">Amount</label> */}
+                    <input type="text" className="form-control" id="recipient" placeholder="To..." />
+                  </div>
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
               </form>
@@ -165,7 +170,7 @@ const Content = (props) => {
               </div>
               <div className="form-group col-md-4 mb-3">
                 {/* <label htmlFor="recipient">Recipient</label> */}
-                <input type="text" className="form-control" id="recipient" placeholder="Recipient's address..." />
+                <input type="text" className="form-control" id="recipient" placeholder="To..." />
               </div>              
             </div>
             <button type="submit" className="btn btn-primary">Submit</button>

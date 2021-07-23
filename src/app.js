@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ProgressBar } from "react-bootstrap";
 
 import web3 from './instances/connection';
 import getDAO from './instances/contracts';
@@ -12,7 +11,8 @@ function App() {
   const [DAO, setDAO] = useState(null);
   const [account, setAccount] = useState(null);
   const [admin, setAdmin] = useState(null);
-  const [shares, setShares] = useState([]);
+  const [shares, setShares] = useState(null);
+  const [totalShares, setTotalShares] = useState(null);
   const [proposals, setProposals] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
 
@@ -73,6 +73,8 @@ function App() {
   const updateShares = useCallback(async() => {
     const shares = await DAO.methods.shares(account).call();
     setShares(shares);
+    const totalShares = await DAO.methods.totalShares().call();
+    setTotalShares(totalShares);
   }, [DAO, account]);
 
   const updateProposals = useCallback(async() => {
@@ -100,18 +102,14 @@ function App() {
   return (
     <div className="bg-dark">
       <Navbar account={account} web3={web3} setAccount={setAccount} />
-      <h1 className="text-center text-light mt-4">Decentralized Autonomous Organization</h1>
-      {/* <h4 className="text-white text-center mt-4">My Shares: {shares}</h4>
-      <div className="col-2 justify-content-center mb-4 d-block mx-auto">
-        <ProgressBar now={now} label={`${now}%`} />;
-      </div> */}
-      
+      <h1 className="text-center text-light mt-4">Decentralized Autonomous Organization</h1>      
       <img src={img} className="rounded mx-auto d-block mt-3 mb-3" width="120" height="120" alt="logo" />
       {showContent && !isLoading && 
         <Content 
           account={account} 
           DAO={DAO} 
           shares={shares} 
+          totalShares={totalShares}
           admin={admin} 
           updateShares={updateShares} 
           proposals={proposals} 

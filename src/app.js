@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import web3 from './instances/connection';
 import getDAO from './instances/contracts';
 import Navbar from './components/Layout/Navbar';
-import Content from './components/Content/Content';
+import Main from './components/Content/Main';
 import Spinner from './components/Layout/Spinner';
 import img from './img/dao-img.png';
 
@@ -105,7 +105,7 @@ function App() {
       <h1 className="text-center text-light mt-4">Decentralized Autonomous Organization</h1>      
       <img src={img} className="rounded mx-auto d-block mt-3 mb-3" width="120" height="120" alt="logo" />
       {showContent && !isLoading && 
-        <Content 
+        <Main 
           account={account} 
           DAO={DAO} 
           shares={shares} 

@@ -1,6 +1,6 @@
 import { ProgressBar } from "react-bootstrap";
 
-const Content = (props) => {
+const Main = (props) => {
   const withdrawEther = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
@@ -242,4 +242,4 @@ const Content = (props) => {
   );
 };
 
-export default Content;
+export default Main;

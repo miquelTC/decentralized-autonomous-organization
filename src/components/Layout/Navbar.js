@@ -1,7 +1,13 @@
   
+import { useContext } from 'react';
+
+import Web3Context from '../../store/web3-context';
+import web3 from '../../instances/connection';
 import logo from '../../img/dao-img.png'
 
-const Navbar = (props) => {
+const Navbar = () => {
+  const web3Ctx = useContext(Web3Context);
+  
   const connectWalletHandler = async() => {
     try {
       // Request account access
@@ -11,8 +17,7 @@ const Navbar = (props) => {
     }
 
     // Load accounts
-    const accounts = await props.web3.eth.getAccounts();
-    props.setAccount(accounts[0]);
+    web3Ctx.loadAccount(web3);
   };
   
   return (
@@ -23,16 +28,16 @@ const Navbar = (props) => {
       </a>
       <ul className="navbar-nav px-3">
         <li className="nav-item">
-          {props.account && 
+          {web3Ctx.account && 
             <a 
               className="nav-link small" 
-              href={`https://etherscan.io/address/${props.account}`}
+              href={`https://etherscan.io/address/${web3Ctx.account}`}
               target="blank"
               rel="noopener noreferrer"
             >
-              {props.account}
+              {web3Ctx.account}
             </a>}
-          {!props.account && 
+          {!web3Ctx.account && 
             <button 
               type="button" 
               className="btn btn-outline-light" 

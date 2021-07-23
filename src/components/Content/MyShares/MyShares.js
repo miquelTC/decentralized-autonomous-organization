@@ -1,16 +1,15 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext } from 'react';
+import DaoContext from '../../../store/dao-context';
 import { ProgressBar } from "react-bootstrap";
 
 const MyShares = () => {
-  const shares = useSelector(state => state.dao.shares);
-  const totalShares = useSelector(state => state.dao.totalShares);
+  const daoCtx = useContext(DaoContext);
 
-  const now = ((shares / totalShares) * 100).toFixed(1);
+  const now = ((daoCtx.shares / daoCtx.totalShares) * 100).toFixed(1);
   
   return(
     <React.Fragment>
-      <h4 className="text-white mt-4">My Shares: {shares}</h4>
+      <h4 className="text-white mt-4">My Shares: {daoCtx.shares}</h4>
       <div className="col-2">
         <ProgressBar now={now} label={`${now}%`} />;
       </div>

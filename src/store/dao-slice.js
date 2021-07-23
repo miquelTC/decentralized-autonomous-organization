@@ -3,12 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 const daoSlice = createSlice({
   name: 'dao',
   initialState: {
-     admin: null,
-     shares: null,
-     totalShares: null,
-     proposals: []
+    loaded: false,
+    admin: null,
+    shares: null,
+    totalShares: null,
+    proposals: []
   },
   reducers: {
+    loaded(state, action) {
+      state.loaded = action.payload;
+    },
     getAdmin(state, action) {
       state.admin = action.payload;
     },

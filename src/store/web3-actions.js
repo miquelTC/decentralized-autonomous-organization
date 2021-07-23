@@ -6,6 +6,8 @@ export const loadAccount = () => {
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
     dispatch(web3Actions.getAccount(account));
+
+    return account;
   };
 };
 

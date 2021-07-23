@@ -1,27 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useContext } from 'react';
 
 import web3 from './instances/connection';
-import getDAO from './instances/contracts';
+import getDao from './instances/contracts';
 import Navbar from './components/Layout/Navbar';
 import Main from './components/Content/Main';
-import Spinner from './components/Layout/Spinner';
-import { loadShares, loadTotalShares } from './store/dao-actions';
-import img from './img/dao-img.png';
+import Web3Context from './store/web3-context';
+import DaoContext from './store/dao-context';
 
 function App() {
-  const dispatch = useDispatch();
-  
-  
-  
-  
-  const [DAO, setDAO] = useState(null);
-  const [account, setAccount] = useState(null);
-  const [admin, setAdmin] = useState(null);
-  const [shares, setShares] = useState(null);
-  const [totalShares, setTotalShares] = useState(null);
-  const [proposals, setProposals] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); 
+  const web3Ctx = useContext(Web3Context);
+  const daoCtx = useContext(DaoContext);
 
   useEffect(() => {
     // Check if the user has Metamask active
@@ -40,36 +28,35 @@ function App() {
       }
       
       // Load account
-      const accounts = await web3.eth.getAccounts();       
-      setAccount(accounts[0]);
+      const account = await web3Ctx.loadAccount(web3);
 
-      // Network ID
-      const networkId = await web3.eth.net.getId()
+      // Load Network ID
+      const networkId = await web3Ctx.loadNetworkId(web3);
+      console.log('test', networkId);
 
-      // Contract
-      const dao = getDAO(networkId);
-      dispatch(loadShares(accounts[0], dao));
-      dispatch(loadTotalShares(dao));
-      const DAO = getDAO(networkId);
-      if(DAO) {
-        // Set contract in state
-        setDAO(DAO);
+      // Load contract
+      const dao = getDao(networkId);
+      if(dao) {
+        // Contract Loaded
+        daoCtx.load();
 
-        // Get admin
-        const admin = await DAO.methods.admin().call();
-        setAdmin(admin);
+        // Load admin
+        daoCtx.loadAdmin(dao);
 
-        setIsLoading(false);
+        // Load Shares and Total Shares
+        daoCtx.loadShares(account, dao);
+        daoCtx.loadTotalShares(dao);
+        
       } else {
         window.alert('DAO contract not deployed to detected network.')
       }
-    };
+    };      
     
     loadBlockchainData();
     
     // Metamask Event Subscription - Account changed
     window.ethereum.on('accountsChanged', (accounts) => {
-      setAccount(accounts[0]);
+      web3Ctx.loadAccount(web3);
     });
 
     // Metamask Event Subscription - Network changed
@@ -78,58 +65,14 @@ function App() {
     });
   }, []);
 
-  const showContent = web3 && account && DAO && admin;
-
-  const updateShares = useCallback(async() => {
-    const shares = await DAO.methods.shares(account).call();
-    setShares(shares);
-    const totalShares = await DAO.methods.totalShares().call();
-    setTotalShares(totalShares);
-  }, [DAO, account]);
-
-  const updateProposals = useCallback(async() => {
-    const nextProposalId = parseInt(await DAO.methods.nextProposalId().call());
-    const proposals = [];
-    for(let i = 0; i < nextProposalId; i++) { 
-      const [proposal, hasVoted] = await Promise.all([
-        DAO.methods.proposals(i).call(),
-        DAO.methods.votes(account, i).call()
-      ]);
-      proposals.push({...proposal, hasVoted});
-    }
-    setProposals(proposals);
-  }, [DAO, account]);
-
-  useEffect(() => {    
-    if(showContent) {
-      updateShares();
-      updateProposals();
-    }
-  }, [showContent, updateShares, updateProposals]);
-
-  const now = 60;
+  const showContent = web3 && web3Ctx.account && daoCtx.admin && daoCtx.loaded;
   
-  return (
+  return (    
     <div className="bg-dark">
-      <Navbar account={account} web3={web3} setAccount={setAccount} />
-      <h1 className="text-center text-light mt-4">Decentralized Autonomous Organization</h1>      
-      <img src={img} className="rounded mx-auto d-block mt-3 mb-3" width="120" height="120" alt="logo" />
-      {showContent && !isLoading && 
-        <Main 
-          account={account} 
-          DAO={DAO} 
-          shares={shares} 
-          totalShares={totalShares}
-          admin={admin} 
-          updateShares={updateShares} 
-          proposals={proposals} 
-          updateProposals={updateProposals} 
-          isLoading={isLoading}  
-        />
-      }
-      {!showContent && isLoading && <Spinner />}
+      <Navbar />      
+      {showContent && <Main />}
     </div>
   );
-}
+};
 
 export default App;

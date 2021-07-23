@@ -1,5 +1,11 @@
 import { daoActions } from './dao-slice';
 
+export const loadDao = () => {  
+  return async(dispatch) => {
+    dispatch(daoActions.loaded(true));
+  };
+};
+
 export const loadAdmin = (dao) => {  
   return async(dispatch) => {
     const admin = await dao.methods.admin().call();

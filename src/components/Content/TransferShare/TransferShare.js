@@ -1,22 +1,22 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useContext } from 'react';
 
-import { loadShares, loadTotalShares } from "../../../store/dao-actions";
 import getDao from "../../../instances/contracts";
+import Web3Context from '../../../store/web3-context';
+import DaoContext from '../../../store/dao-context';
 
 const TransferShare = () => {
-  const account = useSelector(state => state.web3.account);
-  const networkId = useSelector(state => state.web3.networkId);
-  const dao = getDao(networkId); 
+  const web3Ctx = useContext(Web3Context);
+  const daoCtx = useContext(DaoContext);
 
-  const dispatch = useDispatch();
+  const dao = getDao(web3Ctx.networkId); 
   
   const transferShareHandler = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
     const to = event.target.elements[1].value;
-    await dao.methods.transferShare(amount, to).send({from: account});
-    dispatch(loadShares(account, dao));
-    dispatch(loadTotalShares(dao));
+    await dao.methods.transferShare(amount, to).send({from: web3Ctx.account});
+    daoCtx.loadShares(web3Ctx.account, dao);
+    daoCtx.loadTotalShares(dao);
   };
   
   return(

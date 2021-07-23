@@ -2,30 +2,15 @@ import MyShares from './MyShares/MyShares';
 import WithdrawEther from './WithdrawEther/WithdrawEther';
 import Contribute from './Contribute/Contribute';
 import TransferShare from './TransferShare/TransferShare';
+import RedeemShare from './RedeemShare/RedeemShare';
+import CreateProposal from './Proposals/CreateProposal';
 import img from '../../img/dao-img.png';
 
 const Main = (props) => {
 
 
 
-
-  const redeemShare = async(event) => {
-    event.preventDefault();
-    const amount = event.target.elements[0].value;
-    await props.DAO.methods.redeemShare(amount).send({from: props.account});
-    await props.updateShares();
-  };
-
-
-
-  const createProposal = async(event) => {
-    event.preventDefault();
-    const name = event.target.elements[0].value;
-    const amount = event.target.elements[1].value;
-    const recipient = event.target.elements[2].value;
-    await props.DAO.methods.createProposal(name, amount, recipient).send({from: props.account});
-    await props.updateProposals();
-  };
+  
 
   const vote = async(event) => {
     await props.DAO.methods.vote(event.target.value).send({from: props.account});
@@ -53,49 +38,13 @@ const Main = (props) => {
       <div className="row">
         <Contribute />
         <TransferShare />
+        <RedeemShare />
       </div>
-      {/* <div className="row">     
-
-
-        <div className="col-sm-4">
-          <div className="card border-primary text-white bg-secondary mb-4">
-            <div className="card-header">
-              <h2 className="text-center">Redeem shares</h2>
-            </div>
-            <div className="card-body">
-              <form onSubmit={redeemShare}>
-                <div className="form-group mb-3">
-                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
-              </form>
-            </div>
-          </div>
-        </div> 
-      </div> */}
+      <CreateProposal />
+      
 
         
-      {/* <div className="card border-primary text-white bg-secondary mb-4">
-        <div className="card-header">
-          <h2 className="text-center">Create proposal</h2>
-        </div>
-        <div className="card-body">  
-          <form onSubmit={createProposal}>
-            <div className="row">
-              <div className="form-group col-md-4 mb-3">
-                <input type="text" className="form-control" id="name" placeholder="Proposal name..." />
-              </div>
-              <div className="form-group col-md-4 mb-3">
-                <input type="text" className="form-control" id="amount" placeholder="Amount..." />
-              </div>
-              <div className="form-group col-md-4 mb-3">
-                <input type="text" className="form-control" id="recipient" placeholder="To..." />
-              </div>              
-            </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
-          </form> 
-        </div>         
-      </div> */}
+
 
       {/* <div className="card border-primary text-white bg-secondary mb-4">
         <div className="card-header">

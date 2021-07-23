@@ -1,24 +1,25 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useContext } from "react";
 
 import getDao from '../../../instances/contracts';
+import Web3Context from "../../../store/web3-context";
+import DaoContext from "../../../store/dao-context";
 
 const WithdrawEther = () => {
-  const account = useSelector(state => state.web3.account);
-  const admin = useSelector(state => state.dao.admin);
-  const networkId = useSelector(state => state.web3.networkId);
-  const dao = getDao(networkId);
+  const web3Ctx = useContext(Web3Context);
+  const daoCtx = useContext(DaoContext);
+
+  const dao = getDao(web3Ctx.networkId);
 
   const withdrawHandler = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
     const to = event.target.elements[1].value;
-    await dao.methods.withdraw(amount, to).send({from: account});
+    await dao.methods.withdraw(amount, to).send({from: web3Ctx.account});
   };
   
   return(
     <React.Fragment>  
-      {account.toLowerCase() === admin.toLowerCase() ? (
+      {web3Ctx.account.toLowerCase() === daoCtx.admin.toLowerCase() ? (
         <div className="card border-primary text-white bg-secondary mb-4">
           <div className="card-header">
             <h2 className="text-center">Withdraw ether</h2>

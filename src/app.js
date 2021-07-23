@@ -32,7 +32,6 @@ function App() {
 
       // Load Network ID
       const networkId = await web3Ctx.loadNetworkId(web3);
-      console.log('test', networkId);
 
       // Load contract
       const dao = getDao(networkId);
@@ -66,6 +65,7 @@ function App() {
   }, []);
 
   const showContent = web3 && web3Ctx.account && daoCtx.admin && daoCtx.loaded;
+  console.log('test')
   
   return (    
     <div className="bg-dark">

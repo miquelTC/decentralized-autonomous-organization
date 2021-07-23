@@ -1,4 +1,4 @@
-import { ProgressBar } from "react-bootstrap";
+import MyShares from "./MyShares/MyShares";
 
 const Main = (props) => {
   const withdrawEther = async(event) => {
@@ -54,15 +54,16 @@ const Main = (props) => {
     return ((proposalEnd - now) > 0 ? false : true);    
   }  
   
-  const now = ((props.shares / props.totalShares) * 100).toFixed(1);
+  // const now = ((props.shares / props.totalShares) * 100).toFixed(1);
 
   return(
     <div className="container">
-      <h4 className="text-white mt-4">My Shares: {props.shares}</h4>
+      {/* <h4 className="text-white mt-4">My Shares: {props.shares}</h4>
       <div className="col-2">
         <ProgressBar now={now} label={`${now}%`} />;
-      </div>
+      </div> */}
 
+      <MyShares />
       {props.account.toLowerCase() === props.admin.toLowerCase() ? (
         <>
         <div className="card border-primary text-white bg-secondary mb-4">

@@ -1,13 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 import web3 from './instances/connection';
 import getDAO from './instances/contracts';
 import Navbar from './components/Layout/Navbar';
 import Main from './components/Content/Main';
 import Spinner from './components/Layout/Spinner';
+import { loadShares, loadTotalShares } from './store/dao-actions';
 import img from './img/dao-img.png';
 
 function App() {
+  const dispatch = useDispatch();
+  
+  
+  
+  
   const [DAO, setDAO] = useState(null);
   const [account, setAccount] = useState(null);
   const [admin, setAdmin] = useState(null);
@@ -40,6 +47,9 @@ function App() {
       const networkId = await web3.eth.net.getId()
 
       // Contract
+      const dao = getDAO(networkId);
+      dispatch(loadShares(accounts[0], dao));
+      dispatch(loadTotalShares(dao));
       const DAO = getDAO(networkId);
       if(DAO) {
         // Set contract in state

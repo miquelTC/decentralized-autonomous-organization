@@ -84,7 +84,7 @@ const DaoProvider = props => {
   const [DaoState, dispatchDaoAction] = useReducer(daoReducer, defaultDaoState);
   
   const loadContractHandler = (web3, DAO, deployedNetwork) => {
-    const contract = new web3.eth.Contract(DAO.abi, deployedNetwork && deployedNetwork.address);
+    const contract = deployedNetwork ? new web3.eth.Contract(DAO.abi, deployedNetwork.address): '';
     dispatchDaoAction({type: 'CONTRACT', contract: contract}); 
     return contract;
   };

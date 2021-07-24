@@ -11,6 +11,11 @@ function App() {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
 
+  const account = web3Ctx.account;
+  const contract = daoCtx.contract;
+  const admin = daoCtx.admin;
+
+
   useEffect(() => {
     // Check if the user has Metamask active
     if(!web3) {
@@ -28,7 +33,7 @@ function App() {
       }
       
       // Load account
-      const account = await web3Ctx.loadAccount(web3);
+      web3Ctx.loadAccount(web3);
 
       // Load Network ID
       const networkId = await web3Ctx.loadNetworkId(web3);
@@ -57,23 +62,21 @@ function App() {
     });
   }, []);
 
-  const showContent = web3 && web3Ctx.account && daoCtx.contract && daoCtx.admin;
-  console.log('show', showContent);
+  const showContent = web3 && account && contract && admin;
   
   useEffect(() => {
     if(showContent) {
-      // Load Shares and Total Shares
-      console.log('test');
-      daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
-      daoCtx.loadTotalShares(daoCtx.contract);
+      // Load Shares and Total Shares      
+      daoCtx.loadShares(account, contract);
+      daoCtx.loadTotalShares(contract);
 
       // Load Available Funds
-      daoCtx.loadAvailableFunds(daoCtx.contract);
+      daoCtx.loadAvailableFunds(contract);
 
       // Load Proposals
-      daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
+      daoCtx.loadProposals(account, contract);
     }
-  }, [web3, web3Ctx.account, daoCtx.contract, daoCtx.admin]);  
+  }, [web3, account, contract, admin]);  
   
   return (    
     <div className="bg-dark">

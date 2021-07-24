@@ -3,7 +3,7 @@ import React, { useReducer } from 'react';
 import DaoContext from './dao-context';
 
 const defaultDaoState = {
-  loaded: null,
+  contract: null,
   admin: null,
   shares: null,
   totalShares: null,
@@ -11,9 +11,9 @@ const defaultDaoState = {
 };
 
 const daoReducer = (state, action) => {
-  if(action.type === 'LOAD') {    
+  if(action.type === 'CONTRACT') {    
     return {
-      loaded: true,
+      contract: action.contract,
       admin: state.admin,
       shares: state.shares,
       totalShares: state.totalShares,
@@ -23,7 +23,7 @@ const daoReducer = (state, action) => {
   
   if(action.type === 'ADMIN') {
     return {
-      loaded: state.loaded,
+      contract: state.contract,
       admin: action.admin,
       shares: state.shares,
       totalShares: state.totalShares,
@@ -33,7 +33,7 @@ const daoReducer = (state, action) => {
 
   if(action.type === 'SHARES') {    
     return {
-      loaded: state.loaded,
+      contract: state.contract,
       admin: state.admin,
       shares: action.shares,
       totalShares: state.totalShares,
@@ -43,7 +43,7 @@ const daoReducer = (state, action) => {
 
   if(action.type === 'TOTALSHARES') {    
     return {
-      loaded: state.loaded,
+      contract: state.contract,
       admin: state.admin,
       shares: state.shares,
       totalShares: action.totalShares,
@@ -53,7 +53,7 @@ const daoReducer = (state, action) => {
 
   if(action.type === 'PROPOSALS') {    
     return {
-      loaded: state.loaded,
+      contract: state.contract,
       admin: state.admin,
       shares: state.shares,
       totalShares: state.totalShares,
@@ -67,8 +67,10 @@ const daoReducer = (state, action) => {
 const DaoProvider = props => {
   const [DaoState, dispatchDaoAction] = useReducer(daoReducer, defaultDaoState);
   
-  const loadHandler = () => {
-    dispatchDaoAction({type: 'LOAD'}); 
+  const loadContractHandler = (web3, DAO, deployedNetwork) => {
+    const contract = new web3.eth.Contract(DAO.abi, deployedNetwork && deployedNetwork.address);
+    dispatchDaoAction({type: 'CONTRACT', contract: contract}); 
+    return contract;
   };
 
   const loadAdminHandler = async(dao) => {
@@ -100,12 +102,12 @@ const DaoProvider = props => {
   };
   
   const daoContext = {
-    loaded: DaoState.loaded,
+    contract: DaoState.contract,
     admin: DaoState.admin,
     shares: DaoState.shares,
     totalShares: DaoState.totalShares,
     proposals: DaoState.proposals,
-    load: loadHandler,
+    loadContract: loadContractHandler,
     loadAdmin: loadAdminHandler,
     loadShares: loadSharesHandler,
     loadTotalShares: loadTotalSharesHandler,

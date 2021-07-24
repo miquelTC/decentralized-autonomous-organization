@@ -1,22 +1,19 @@
 import { useContext } from 'react';
 
-import getDao from "../../../instances/contracts";
 import Web3Context from '../../../store/web3-context';
 import DaoContext from '../../../store/dao-context';
 
 const CreateProposal = () => {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
-
-  const dao = getDao(web3Ctx.networkId); 
   
   const createProposalHandler = async(event) => {
     event.preventDefault();
     const name = event.target.elements[0].value;
     const amount = event.target.elements[1].value;
     const recipient = event.target.elements[2].value;
-    await dao.methods.createProposal(name, amount, recipient).send({from: web3Ctx.account});
-    await daoCtx.loadProposals(web3Ctx.account, dao);
+    await daoCtx.contract.methods.createProposal(name, amount, recipient).send({from: web3Ctx.account});
+    await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
   };
   
   return(

@@ -2,7 +2,7 @@
 import { useContext } from 'react';
 
 import Web3Context from '../../store/web3-context';
-import web3 from '../../instances/connection';
+import web3 from '../../connection/web3';
 import logo from '../../img/dao-img.png'
 
 const Navbar = () => {

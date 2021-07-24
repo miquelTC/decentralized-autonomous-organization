@@ -1,12 +1,12 @@
 import React from 'react';
 
 const DaoContext = React.createContext({
-  loaded: null,
+  contract: null,
   admin: null,
   shares: null,
   totalShares: null,
   proposals: [],
-  load: () => {},
+  loadContract: () => {},
   loadAdmin: () => {},
   loadShares: () => {},
   loadToalShares: () => {},

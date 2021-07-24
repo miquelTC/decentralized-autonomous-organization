@@ -1,21 +1,18 @@
 import { useContext } from 'react';
 
-import getDao from "../../../instances/contracts";
 import Web3Context from '../../../store/web3-context';
 import DaoContext from '../../../store/dao-context';
 
 const Contribute = () => {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
-
-  const dao = getDao(web3Ctx.networkId); 
   
   const contributeHandler = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
-    await dao.methods.contribute().send({from: web3Ctx.account, value: amount});
-    daoCtx.loadShares(web3Ctx.account, dao);
-    daoCtx.loadTotalShares(dao);
+    await daoCtx.contract.methods.contribute().send({from: web3Ctx.account, value: amount});
+    daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
+    daoCtx.loadTotalShares(daoCtx.contract);
   };
   
   return(

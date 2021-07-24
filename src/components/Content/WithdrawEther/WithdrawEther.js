@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 
-import getDao from '../../../instances/contracts';
 import Web3Context from "../../../store/web3-context";
 import DaoContext from "../../../store/dao-context";
 
@@ -8,13 +7,11 @@ const WithdrawEther = () => {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
 
-  const dao = getDao(web3Ctx.networkId);
-
   const withdrawHandler = async(event) => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
     const to = event.target.elements[1].value;
-    await dao.methods.withdraw(amount, to).send({from: web3Ctx.account});
+    await daoCtx.contract.methods.withdraw(amount, to).send({from: web3Ctx.account});
   };
   
   return(

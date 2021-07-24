@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 
-import web3 from './instances/connection';
-import getDao from './instances/contracts';
+import DAO from './abis/DAO.json';
+import web3 from './connection/web3';
 import Navbar from './components/Layout/Navbar';
 import Main from './components/Content/Main';
 import Web3Context from './store/web3-context';
@@ -32,22 +32,20 @@ function App() {
 
       // Load Network ID
       const networkId = await web3Ctx.loadNetworkId(web3);
+      const deployedNetwork = DAO.networks[networkId];
 
       // Load contract
-      const dao = getDao(networkId);
-      if(dao) {
-        // Contract Loaded
-        daoCtx.load();
-
+      const contract = daoCtx.loadContract(web3, DAO, deployedNetwork);
+      if(contract) {
         // Load admin
-        daoCtx.loadAdmin(dao);
+        daoCtx.loadAdmin(contract);
 
         // Load Shares and Total Shares
-        daoCtx.loadShares(account, dao);
-        daoCtx.loadTotalShares(dao);
+        daoCtx.loadShares(account, contract);
+        daoCtx.loadTotalShares(contract);
 
         // Load Proposals
-        daoCtx.loadProposals(account, dao);
+        daoCtx.loadProposals(account, contract);
         
       } else {
         window.alert('DAO contract not deployed to detected network.')
@@ -67,7 +65,7 @@ function App() {
     });
   }, []);
 
-  const showContent = web3 && web3Ctx.account && daoCtx.admin && daoCtx.loaded;
+  const showContent = web3 && web3Ctx.account && daoCtx.contract && daoCtx.admin;
   
   return (    
     <div className="bg-dark">

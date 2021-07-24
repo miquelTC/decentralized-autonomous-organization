@@ -98,12 +98,12 @@ contract DAO {
   }
 
   function withdrawEther(uint amount, address payable to) external onlyAdmin {    
+    availableFunds -= amount;
     _transferEther(amount, to);
   }
 
   function _transferEther(uint amount, address payable to) internal {
-    require(availableFunds >= amount, 'not enough availableFunds');
-    availableFunds -= amount;
+    require(availableFunds >= amount, 'not enough availableFunds');    
     to.transfer(amount);
   }
 

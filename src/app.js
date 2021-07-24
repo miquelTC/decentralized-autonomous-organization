@@ -45,6 +45,9 @@ function App() {
         // Load Shares and Total Shares
         daoCtx.loadShares(account, dao);
         daoCtx.loadTotalShares(dao);
+
+        // Load Proposals
+        daoCtx.loadProposals(account, dao);
         
       } else {
         window.alert('DAO contract not deployed to detected network.')
@@ -65,7 +68,6 @@ function App() {
   }, []);
 
   const showContent = web3 && web3Ctx.account && daoCtx.admin && daoCtx.loaded;
-  console.log('test')
   
   return (    
     <div className="bg-dark">

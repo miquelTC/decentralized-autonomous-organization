@@ -55,7 +55,7 @@ const daoReducer = (state, action) => {
     return {
       loaded: state.loaded,
       admin: state.admin,
-      shares: state.totalShares,
+      shares: state.shares,
       totalShares: state.totalShares,
       proposals: action.proposals
     };

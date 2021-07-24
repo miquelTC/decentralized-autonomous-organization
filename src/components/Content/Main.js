@@ -1,4 +1,5 @@
 import MyShares from './MyShares/MyShares';
+import AvailableFunds from './Funds/AvailableFunds';
 import WithdrawEther from './WithdrawEther/WithdrawEther';
 import Contribute from './Contribute/Contribute';
 import TransferShare from './TransferShare/TransferShare';
@@ -12,9 +13,12 @@ const Main = () => {
     <div className="container">
       <h1 className="text-center text-light mt-4">Decentralized Autonomous Organization</h1>      
       <img src={img} className="rounded mx-auto d-block mt-3 mb-3" width="120" height="120" alt="logo" />
-      <MyShares />
+      <div className="row justify-content-between">
+        <MyShares />
+        <AvailableFunds />
+      </div>
       <WithdrawEther />
-      <div className="row">
+      <div className="row justify-content-between">
         <Contribute />
         <TransferShare />
         <RedeemShare />

@@ -38,15 +38,7 @@ function App() {
       const contract = daoCtx.loadContract(web3, DAO, deployedNetwork);
       if(contract) {
         // Load admin
-        daoCtx.loadAdmin(contract);
-
-        // Load Shares and Total Shares
-        daoCtx.loadShares(account, contract);
-        daoCtx.loadTotalShares(contract);
-
-        // Load Proposals
-        daoCtx.loadProposals(account, contract);
-        
+        daoCtx.loadAdmin(contract);        
       } else {
         window.alert('DAO contract not deployed to detected network.')
       }
@@ -66,6 +58,22 @@ function App() {
   }, []);
 
   const showContent = web3 && web3Ctx.account && daoCtx.contract && daoCtx.admin;
+  console.log('show', showContent);
+  
+  useEffect(() => {
+    if(showContent) {
+      // Load Shares and Total Shares
+      console.log('test');
+      daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
+      daoCtx.loadTotalShares(daoCtx.contract);
+
+      // Load Available Funds
+      daoCtx.loadAvailableFunds(daoCtx.contract);
+
+      // Load Proposals
+      daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
+    }
+  }, [web3, web3Ctx.account, daoCtx.contract, daoCtx.admin]);  
   
   return (    
     <div className="bg-dark">

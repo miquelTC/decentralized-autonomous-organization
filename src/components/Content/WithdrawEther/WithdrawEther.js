@@ -11,7 +11,8 @@ const WithdrawEther = () => {
     event.preventDefault();
     const amount = event.target.elements[0].value;
     const to = event.target.elements[1].value;
-    await daoCtx.contract.methods.withdraw(amount, to).send({from: web3Ctx.account});
+    await daoCtx.contract.methods.withdrawEther(amount, to).send({from: web3Ctx.account});
+    daoCtx.loadAvailableFunds(daoCtx.contract);
   };
   
   return(

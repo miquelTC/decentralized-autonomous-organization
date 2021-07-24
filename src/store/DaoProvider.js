@@ -17,6 +17,7 @@ const daoReducer = (state, action) => {
       admin: state.admin,
       shares: state.shares,
       totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
       proposals: state.proposals
     };
   } 
@@ -27,6 +28,7 @@ const daoReducer = (state, action) => {
       admin: action.admin,
       shares: state.shares,
       totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
       proposals: state.proposals
     };
   }
@@ -37,6 +39,7 @@ const daoReducer = (state, action) => {
       admin: state.admin,
       shares: action.shares,
       totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
       proposals: state.proposals
     };
   }
@@ -47,6 +50,18 @@ const daoReducer = (state, action) => {
       admin: state.admin,
       shares: state.shares,
       totalShares: action.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: state.proposals
+    };
+  }
+
+  if(action.type === 'AVAILABLEFUNDS') {    
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: state.totalShares,
+      availableFunds: action.availableFunds,
       proposals: state.proposals
     };
   }
@@ -57,6 +72,7 @@ const daoReducer = (state, action) => {
       admin: state.admin,
       shares: state.shares,
       totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
       proposals: action.proposals
     };
   }
@@ -73,28 +89,33 @@ const DaoProvider = props => {
     return contract;
   };
 
-  const loadAdminHandler = async(dao) => {
-    const admin = await dao.methods.admin().call();
+  const loadAdminHandler = async(contract) => {
+    const admin = await contract.methods.admin().call();
     dispatchDaoAction({type: 'ADMIN', admin: admin});
   };
 
-  const loadSharesHandler =async(account, dao) => {
-    const shares = await dao.methods.shares(account).call();
+  const loadSharesHandler =async(account, contract) => {
+    const shares = await contract.methods.shares(account).call();
     dispatchDaoAction({type: 'SHARES', shares: shares});
   };
 
-  const loadTotalSharesHandler = async(dao) => {
-    const totalShares = await dao.methods.totalShares().call();
+  const loadTotalSharesHandler = async(contract) => {
+    const totalShares = await contract.methods.totalShares().call();
     dispatchDaoAction({type: 'TOTALSHARES', totalShares: totalShares});
   };
 
-  const loadProposalsHandler = async(account, dao) => {
-    const nextProposalId = parseInt(await dao.methods.nextProposalId().call());
+  const loadAvailableFundsHandler = async(contract) => {
+    const availableFunds = await contract.methods.availableFunds().call();
+    dispatchDaoAction({type: 'AVAILABLEFUNDS', availableFunds: availableFunds});
+  };
+
+  const loadProposalsHandler = async(account, contract) => {
+    const nextProposalId = parseInt(await contract.methods.nextProposalId().call());
     const proposals = [];
     for(let i = 0; i < nextProposalId; i++) { 
       const [proposal, hasVoted] = await Promise.all([
-        dao.methods.proposals(i).call(),
-        dao.methods.votes(account, i).call()
+        contract.methods.proposals(i).call(),
+        contract.methods.votes(account, i).call()
       ]);
       proposals.push({...proposal, hasVoted});
     }  
@@ -106,11 +127,13 @@ const DaoProvider = props => {
     admin: DaoState.admin,
     shares: DaoState.shares,
     totalShares: DaoState.totalShares,
+    availableFunds: DaoState.availableFunds,
     proposals: DaoState.proposals,
     loadContract: loadContractHandler,
     loadAdmin: loadAdminHandler,
     loadShares: loadSharesHandler,
     loadTotalShares: loadTotalSharesHandler,
+    loadAvailableFunds: loadAvailableFundsHandler,
     loadProposals: loadProposalsHandler
   };
   

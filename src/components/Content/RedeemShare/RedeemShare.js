@@ -13,6 +13,7 @@ const RedeemShare = () => {
     await daoCtx.contract.methods.redeemShare(amount).send({from: web3Ctx.account});
     await daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
     await daoCtx.loadTotalShares(daoCtx.contract);
+    daoCtx.loadAvailableFunds(daoCtx.contract);
   };
   
   return(    

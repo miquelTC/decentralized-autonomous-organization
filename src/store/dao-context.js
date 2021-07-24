@@ -5,11 +5,13 @@ const DaoContext = React.createContext({
   admin: null,
   shares: null,
   totalShares: null,
+  availableFunds: null,
   proposals: [],
   loadContract: () => {},
   loadAdmin: () => {},
   loadShares: () => {},
   loadToalShares: () => {},
+  loadAvailableFunds: () => {},
   loadProposals: () => {}
 });
 

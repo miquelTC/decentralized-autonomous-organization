@@ -13,6 +13,7 @@ const Contribute = () => {
     await daoCtx.contract.methods.contribute().send({from: web3Ctx.account, value: amount});
     daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
     daoCtx.loadTotalShares(daoCtx.contract);
+    daoCtx.loadAvailableFunds(daoCtx.contract);
   };
   
   return(

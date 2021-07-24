@@ -10,8 +10,9 @@ const MyShares = () => {
   
   return(
     <React.Fragment>
+      <div className="col-3">
       <h4 className="text-white mt-4">My Shares: {daoCtx.shares}</h4>
-      <div className="col-2">
+      
         <ProgressBar now={now} label={`${now}%`} />;
       </div>
     </React.Fragment>

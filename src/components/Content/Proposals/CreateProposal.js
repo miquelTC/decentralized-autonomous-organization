@@ -14,6 +14,7 @@ const CreateProposal = () => {
     const recipient = event.target.elements[2].value;
     await daoCtx.contract.methods.createProposal(name, amount, recipient).send({from: web3Ctx.account});
     await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
+    daoCtx.loadAvailableFunds(daoCtx.contract);
   };
   
   return(

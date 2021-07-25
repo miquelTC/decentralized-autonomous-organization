@@ -1,21 +1,56 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
+import web3 from '../../../connection/web3';
 import Web3Context from '../../../store/web3-context';
 import DaoContext from '../../../store/dao-context';
 
 const CreateProposal = () => {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
+
+  const [enteredName, setEnteredName] = useState('');
+  const [nameIsValid, setNameIsValid] = useState(true);
+
+  const [enteredAmount, setEnteredAmount] = useState('');
+  const [amountIsValid, setAmountIsValid] = useState(true);
+
+  const [enteredRecipient, setEnteredRecipient] = useState('');
+  const [recipientIsValid, setRecipientIsValid] = useState(true);
+
+  const formIsValid = enteredName && enteredAmount > 0 && web3.utils.isAddress(enteredRecipient);
+
+  const nameChangeHandler = (event) => {
+    setEnteredName(event.target.value);
+  };
+
+  const amountChangeHandler = (event) => {
+    setEnteredAmount(event.target.value);
+  };
+
+  const recipientChangeHandler = (event) => {
+    setEnteredRecipient(event.target.value);
+  };
   
   const createProposalHandler = async(event) => {
     event.preventDefault();
-    const name = event.target.elements[0].value;
-    const amount = event.target.elements[1].value;
-    const recipient = event.target.elements[2].value;
-    await daoCtx.contract.methods.createProposal(name, amount, recipient).send({from: web3Ctx.account});
-    await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
-    daoCtx.loadAvailableFunds(daoCtx.contract);
+
+    enteredName ? setNameIsValid(true) : setNameIsValid(false);
+    enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
+    web3.utils.isAddress(enteredRecipient) ? setRecipientIsValid(true) : setRecipientIsValid(false);
+
+    if(formIsValid) {
+      await daoCtx.contract.methods.createProposal(enteredName, enteredAmount, enteredRecipient).send({from: web3Ctx.account});
+      await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
+      daoCtx.loadAvailableFunds(daoCtx.contract);
+      setEnteredName('');
+      setEnteredAmount('');
+      setEnteredRecipient('');
+    }
   };
+
+  const nameClass = nameIsValid? "form-control" : "form-control is-invalid";
+  const amountClass = amountIsValid? "form-control" : "form-control is-invalid";
+  const recipientClass = recipientIsValid? "form-control" : "form-control is-invalid";
   
   return(
     <div className="card border-primary text-white bg-secondary mb-4">
@@ -25,14 +60,35 @@ const CreateProposal = () => {
       <div className="card-body">  
         <form onSubmit={createProposalHandler}>
           <div className="row">
-            <div className="form-group col-md-4 mb-3">
-              <input type="text" className="form-control" id="name" placeholder="Proposal name..." />
+            <div className="col-md-4">
+              <input 
+                type="text" 
+                className={nameClass} 
+                placeholder="Proposal name..." 
+                onChange={nameChangeHandler}
+                value={enteredName}
+              />
+              {!nameIsValid ? <p className="text-danger"> Please, enter a name</p> : <p><br/></p>}
             </div>
-            <div className="form-group col-md-4 mb-3">
-              <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+            <div className="col-md-4">
+              <input 
+                type="text" 
+                className={amountClass} 
+                placeholder="Amount..." 
+                onChange={amountChangeHandler}
+                value={enteredAmount}
+              />
+              {!amountIsValid ? <p className="text-danger"> Please, enter a valid amount</p> : <p><br/></p>}
             </div>
-            <div className="form-group col-md-4 mb-3">
-              <input type="text" className="form-control" id="recipient" placeholder="To..." />
+            <div className="col-md-4">
+              <input 
+                type="text" 
+                className={recipientClass} 
+                placeholder="To..."
+                onChange={recipientChangeHandler}
+                value={enteredRecipient}
+              />
+              {!recipientIsValid ? <p className="text-danger"> Please, enter a valid address</p> : <p><br/></p>}
             </div>              
           </div>
           <button type="submit" className="btn btn-primary">Submit</button>

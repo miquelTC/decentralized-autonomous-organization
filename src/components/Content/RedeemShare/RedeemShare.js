@@ -1,20 +1,34 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 import Web3Context from '../../../store/web3-context';
 import DaoContext from '../../../store/dao-context';
 
 const RedeemShare = () => {
   const web3Ctx = useContext(Web3Context);
-  const daoCtx = useContext(DaoContext); 
+  const daoCtx = useContext(DaoContext);
+
+  const [enteredAmount, setEnteredAmount] = useState('');
+  const [amountIsValid, setAmountIsValid] = useState(true);
+
+  const amountChangeHandler = (event) => {
+    setEnteredAmount(event.target.value);
+  };
   
   const redeemShareHandler = async(event) => {
     event.preventDefault();
-    const amount = event.target.elements[0].value;
-    await daoCtx.contract.methods.redeemShare(amount).send({from: web3Ctx.account});
-    await daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
-    await daoCtx.loadTotalShares(daoCtx.contract);
-    daoCtx.loadAvailableFunds(daoCtx.contract);
+
+    enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
+
+    if(enteredAmount > 0) {
+      await daoCtx.contract.methods.redeemShare(enteredAmount).send({from: web3Ctx.account});
+      await daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
+      await daoCtx.loadTotalShares(daoCtx.contract);
+      daoCtx.loadAvailableFunds(daoCtx.contract);
+      setEnteredAmount(''); 
+    }    
   };
+
+  const amountClass = amountIsValid? "form-control" : "form-control is-invalid";
   
   return(    
     <div className="col-sm-4">
@@ -24,9 +38,14 @@ const RedeemShare = () => {
         </div>
         <div className="card-body">
           <form onSubmit={redeemShareHandler}>
-            <div className="form-group mb-3">
-              <input type="text" className="form-control" id="amount" placeholder="Amount..." />
-            </div>
+            <input 
+              type="text" 
+              className={amountClass}
+              placeholder="Amount..."
+              onChange={amountChangeHandler} 
+              value={enteredAmount} 
+            />
+            {!amountIsValid ? <p className="text-danger"> Please, enter a valid amount</p> : <p><br/></p>}
             <button type="submit" className="btn btn-primary">Submit</button>
           </form>
         </div>

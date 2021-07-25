@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
+import web3 from "../../../connection/web3";
 import Web3Context from "../../../store/web3-context";
 import DaoContext from "../../../store/dao-context";
 
@@ -7,13 +8,38 @@ const WithdrawEther = () => {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
 
+  const [enteredAmount, setEnteredAmount] = useState('');
+  const [amountIsValid, setAmountIsValid] = useState(true);
+
+  const [enteredRecipient, setEnteredRecipient] = useState('');
+  const [recipientIsValid, setRecipientIsValid] = useState(true);
+
+  const formIsValid = enteredAmount > 0 && web3.utils.isAddress(enteredRecipient);
+
+  const amountChangeHandler = (event) => {
+    setEnteredAmount(event.target.value);
+  };
+
+  const recipientChangeHandler = (event) => {
+    setEnteredRecipient(event.target.value);
+  };
+
   const withdrawHandler = async(event) => {
     event.preventDefault();
-    const amount = event.target.elements[0].value;
-    const to = event.target.elements[1].value;
-    await daoCtx.contract.methods.withdrawEther(amount, to).send({from: web3Ctx.account});
-    daoCtx.loadAvailableFunds(daoCtx.contract);
+
+    enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
+    web3.utils.isAddress(enteredRecipient) ? setRecipientIsValid(true) : setRecipientIsValid(false);
+
+    if(formIsValid) {
+      await daoCtx.contract.methods.withdrawEther(enteredAmount, enteredRecipient).send({from: web3Ctx.account});
+      daoCtx.loadAvailableFunds(daoCtx.contract);
+      setEnteredAmount('');
+      setEnteredRecipient('');
+    }    
   };
+
+  const amountClass = amountIsValid? "form-control" : "form-control is-invalid";
+  const recipientClass = recipientIsValid? "form-control" : "form-control is-invalid";
   
   return(
     <React.Fragment>  
@@ -25,11 +51,25 @@ const WithdrawEther = () => {
           <div className="card-body">            
             <form onSubmit={withdrawHandler}>
               <div className="row">
-                <div className="form-group col-md-6 mb-3">
-                  <input type="text" className="form-control" id="amount" placeholder="Amount..." />
+                <div className="col-md-6">
+                  <input 
+                    type="text" 
+                    className={amountClass} 
+                    placeholder="Amount..."
+                    onChange={amountChangeHandler}
+                    value={enteredAmount}
+                  />
+                  {!amountIsValid ? <p className="text-danger"> Please, enter a valid amount</p> : <p><br/></p>}
                 </div>
-                <div className="form-group col-md-6 mb-3">
-                  <input type="text" className="form-control" id="to" placeholder="To..." />
+                <div className="col-md-6">
+                  <input 
+                    type="text" 
+                    className={recipientClass} 
+                    placeholder="To..."
+                    onChange={recipientChangeHandler}
+                    value={enteredRecipient}
+                  />
+                  {!recipientIsValid ? <p className="text-danger"> Please, enter a valid address</p> : <p><br/></p>}
                 </div>                
               </div>
               <button type="submit" className="btn btn-primary">Submit</button>

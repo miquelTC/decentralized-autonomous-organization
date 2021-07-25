@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useCallback } from 'react';
 
 import DaoContext from './dao-context';
 
@@ -94,22 +94,22 @@ const DaoProvider = props => {
     dispatchDaoAction({type: 'ADMIN', admin: admin});
   };
 
-  const loadSharesHandler =async(account, contract) => {
+  const loadSharesHandler = useCallback(async(account, contract) => {
     const shares = await contract.methods.shares(account).call();
     dispatchDaoAction({type: 'SHARES', shares: shares});
-  };
+  }, []);
 
-  const loadTotalSharesHandler = async(contract) => {
+  const loadTotalSharesHandler = useCallback(async(contract) => {
     const totalShares = await contract.methods.totalShares().call();
     dispatchDaoAction({type: 'TOTALSHARES', totalShares: totalShares});
-  };
+  }, []);
 
-  const loadAvailableFundsHandler = async(contract) => {
+  const loadAvailableFundsHandler = useCallback(async(contract) => {
     const availableFunds = await contract.methods.availableFunds().call();
     dispatchDaoAction({type: 'AVAILABLEFUNDS', availableFunds: availableFunds});
-  };
+  }, []);
 
-  const loadProposalsHandler = async(account, contract) => {
+  const loadProposalsHandler = useCallback(async(account, contract) => {
     const nextProposalId = parseInt(await contract.methods.nextProposalId().call());
     const proposals = [];
     for(let i = 0; i < nextProposalId; i++) { 
@@ -120,8 +120,8 @@ const DaoProvider = props => {
       proposals.push({...proposal, hasVoted});
     }  
     dispatchDaoAction({type: 'PROPOSALS', proposals: proposals});
-  };
-  
+  }, []);
+
   const daoContext = {
     contract: DaoState.contract,
     admin: DaoState.admin,
@@ -136,6 +136,35 @@ const DaoProvider = props => {
     loadAvailableFunds: loadAvailableFundsHandler,
     loadProposals: loadProposalsHandler
   };
+  
+  // const daoContext = useMemo({
+  //   contract: DaoState.contract,
+  //   admin: DaoState.admin,
+  //   shares: DaoState.shares,
+  //   totalShares: DaoState.totalShares,
+  //   availableFunds: DaoState.availableFunds,
+  //   proposals: DaoState.proposals,
+  //   loadContract: loadContractHandler,
+  //   loadAdmin: loadAdminHandler,
+  //   loadShares: loadSharesHandler,
+  //   loadTotalShares: loadTotalSharesHandler,
+  //   loadAvailableFunds: loadAvailableFundsHandler,
+  //   loadProposals: loadProposalsHandler
+  // },
+  //  [
+  //   DaoState.contract, 
+  //   DaoState.admin, 
+  //   DaoState.shares, 
+  //   DaoState.totalShares, 
+  //   DaoState.availableFunds, 
+  //   DaoState.proposals, 
+  //   loadContractHandler, 
+  //   loadAdminHandler, 
+  //   loadSharesHandler,
+  //   loadTotalSharesHandler,
+  //   loadAvailableFundsHandler,
+  //   loadProposalsHandler
+  // ]);
   
   return (
     <DaoContext.Provider value={daoContext}>

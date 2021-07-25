@@ -11,9 +11,8 @@ function App() {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
 
-  const account = web3Ctx.account;
-  const contract = daoCtx.contract;
-  const admin = daoCtx.admin;
+  const { account, loadAccount, loadNetworkId } = web3Ctx;
+  const { contract, loadContract, admin, loadAdmin, loadShares, loadTotalShares, loadAvailableFunds, loadProposals } = daoCtx;
 
 
   useEffect(() => {
@@ -33,17 +32,17 @@ function App() {
       }
       
       // Load account
-      web3Ctx.loadAccount(web3);
+      loadAccount(web3);
 
       // Load Network ID
-      const networkId = await web3Ctx.loadNetworkId(web3);
+      const networkId = await loadNetworkId(web3);
       const deployedNetwork = DAO.networks[networkId];
 
       // Load contract
-      const contract = daoCtx.loadContract(web3, DAO, deployedNetwork);
+      const contract = loadContract(web3, DAO, deployedNetwork);
       if(contract) {
         // Load admin
-        daoCtx.loadAdmin(contract);        
+        loadAdmin(contract);        
       } else {
         window.alert('DAO contract not deployed to detected network.')
       }
@@ -53,7 +52,7 @@ function App() {
     
     // Metamask Event Subscription - Account changed
     window.ethereum.on('accountsChanged', (accounts) => {
-      web3Ctx.loadAccount(web3);
+      loadAccount(web3);
     });
 
     // Metamask Event Subscription - Network changed
@@ -65,18 +64,18 @@ function App() {
   const showContent = web3 && account && contract && admin;
   
   useEffect(() => {
-    if(showContent) {
+    if(showContent) {      
       // Load Shares and Total Shares      
-      daoCtx.loadShares(account, contract);
-      daoCtx.loadTotalShares(contract);
+      loadShares(account, contract);
+      loadTotalShares(contract);
 
       // Load Available Funds
-      daoCtx.loadAvailableFunds(contract);
+      loadAvailableFunds(contract);
 
       // Load Proposals
-      daoCtx.loadProposals(account, contract);
+      loadProposals(account, contract);
     }
-  }, [web3, account, contract, admin]);  
+  }, [showContent, account, contract, loadShares, loadTotalShares, loadAvailableFunds, loadProposals]);  
   
   return (    
     <div className="bg-dark">

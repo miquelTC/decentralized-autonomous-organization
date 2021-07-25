@@ -33,6 +33,8 @@ contract DAO {
   uint public quorum;
   address public admin;
 
+  event Shares(uint shares, uint totalShares);
+
   constructor(uint contributionTime, uint _voteTime, uint _quorum) {
     require(_quorum > 0 && _quorum < 100, 'quorum must be between 0 and 100');
     contributionEnd = block.timestamp + contributionTime;
@@ -47,6 +49,7 @@ contract DAO {
     shares[msg.sender] += msg.value;
     totalShares += msg.value;
     availableFunds += msg.value;
+    emit Shares(shares[msg.sender], totalShares);
   }
 
   function redeemShare(uint amount) external {
@@ -56,6 +59,7 @@ contract DAO {
     totalShares -= amount;
     availableFunds -= amount;
     payable(msg.sender).transfer(amount);
+    emit Shares(shares[msg.sender], totalShares);
   }
 
   function transferShare(uint amount, address to) external {
@@ -63,6 +67,7 @@ contract DAO {
     shares[msg.sender] -= amount;
     shares[to] += amount;
     investors[to] = true;
+    emit Shares(shares[msg.sender], totalShares);
   }
 
   function createProposal(string memory name, uint amount, address payable recipient) public onlyInvestors() {

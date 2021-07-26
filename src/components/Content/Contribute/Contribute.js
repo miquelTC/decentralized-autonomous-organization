@@ -19,12 +19,17 @@ const Contribute = () => {
 
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
 
-    if(enteredAmount > 0) {
-      await daoCtx.contract.methods.contribute().send({from: web3Ctx.account, value: enteredAmount});
-      daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
-      daoCtx.loadTotalShares(daoCtx.contract);
-      daoCtx.loadAvailableFunds(daoCtx.contract);
-      setEnteredAmount('');      
+    if(enteredAmount > 0) {      
+      daoCtx.contract.methods.contribute().send({from: web3Ctx.account, value: enteredAmount})
+      .on('transactionhash', (hash) => {
+        setEnteredAmount('');
+        daoCtx.setIsLoading(true);
+      })
+      .on('error', (error) => {
+        window.alert('Something went wrong when pushing to the blockchain');
+        daoCtx.setIsLoading(false);
+      })
+      //daoCtx.loadAvailableFunds(daoCtx.contract);   
     }
   };
   

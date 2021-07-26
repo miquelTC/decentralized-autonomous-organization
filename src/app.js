@@ -6,14 +6,14 @@ import Navbar from './components/Layout/Navbar';
 import Main from './components/Content/Main';
 import Web3Context from './store/web3-context';
 import DaoContext from './store/dao-context';
+import Spinner from './components/Layout/Spinner';
 
 function App() {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
 
   const { account, loadAccount, loadNetworkId } = web3Ctx;
-  const { contract, loadContract, admin, loadAdmin, loadShares, loadTotalShares, loadAvailableFunds, loadProposals } = daoCtx;
-
+  const { contract, loadContract, admin, loadAdmin, loadShares, updateShares, loadTotalShares, updateTotalShares, loadAvailableFunds, loadProposals, isLoading, setIsLoading } = daoCtx;
 
   useEffect(() => {
     // Check if the user has Metamask active
@@ -42,7 +42,15 @@ function App() {
       const contract = loadContract(web3, DAO, deployedNetwork);
       if(contract) {
         // Load admin
-        loadAdmin(contract);        
+        loadAdmin(contract);
+        setIsLoading(false);
+
+        // Subscribe to Shares Event
+        contract.events.Shares({}, (error, event) => {
+          updateShares(event.returnValues.shares);
+          updateTotalShares(event.returnValues.totalShares);
+          setIsLoading(false);
+        });      
       } else {
         window.alert('DAO contract not deployed to detected network.')
       }
@@ -80,7 +88,8 @@ function App() {
   return (    
     <div className="bg-dark">
       <Navbar />      
-      {showContent && <Main />}
+      {showContent && !isLoading && <Main />}
+      {isLoading && <Spinner />}
     </div>
   );
 };

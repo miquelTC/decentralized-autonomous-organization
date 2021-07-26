@@ -7,12 +7,18 @@ const DaoContext = React.createContext({
   totalShares: null,
   availableFunds: null,
   proposals: [],
+  isLoading: null,
   loadContract: () => {},
   loadAdmin: () => {},
   loadShares: () => {},
+  updateShares: () => {},
   loadToalShares: () => {},
+  updateTotalShares: () => {},
   loadAvailableFunds: () => {},
-  loadProposals: () => {}
+  updateAvailableFunds: () => {},
+  loadProposals: () => {},
+  updateProposals: () => {},
+  setIsLoading: () => {}
 });
 
 export default DaoContext;

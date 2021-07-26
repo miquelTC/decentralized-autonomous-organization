@@ -7,7 +7,8 @@ const defaultDaoState = {
   admin: null,
   shares: null,
   totalShares: null,
-  proposals: []
+  proposals: [],
+  isLoading: true
 };
 
 const daoReducer = (state, action) => {
@@ -18,7 +19,8 @@ const daoReducer = (state, action) => {
       shares: state.shares,
       totalShares: state.totalShares,
       availableFunds: state.availableFunds,
-      proposals: state.proposals
+      proposals: state.proposals,
+      isLoading: state.isLoading
     };
   } 
   
@@ -29,7 +31,8 @@ const daoReducer = (state, action) => {
       shares: state.shares,
       totalShares: state.totalShares,
       availableFunds: state.availableFunds,
-      proposals: state.proposals
+      proposals: state.proposals,
+      isLoading: state.isLoading
     };
   }
 
@@ -40,7 +43,20 @@ const daoReducer = (state, action) => {
       shares: action.shares,
       totalShares: state.totalShares,
       availableFunds: state.availableFunds,
-      proposals: state.proposals
+      proposals: state.proposals,
+      isLoading: state.isLoading
+    };
+  }
+
+  if(action.type === 'UPDATESHARES') {    
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: action.shares,
+      totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: state.proposals,
+      isLoading: state.isLoading
     };
   }
 
@@ -51,7 +67,20 @@ const daoReducer = (state, action) => {
       shares: state.shares,
       totalShares: action.totalShares,
       availableFunds: state.availableFunds,
-      proposals: state.proposals
+      proposals: state.proposals,
+      isLoading: state.isLoading
+    };
+  }
+
+  if(action.type === 'UPDATETOTALSHARES') {    
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: action.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: state.proposals,
+      isLoading: state.isLoading
     };
   }
 
@@ -62,7 +91,20 @@ const daoReducer = (state, action) => {
       shares: state.shares,
       totalShares: state.totalShares,
       availableFunds: action.availableFunds,
-      proposals: state.proposals
+      proposals: state.proposals,
+      isLoading: state.isLoading
+    };
+  }
+
+  if(action.type === 'UPDATEAVAILABLEFUNDS') {    
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: state.totalShares,
+      availableFunds: action.availableFunds,
+      proposals: state.proposals,
+      isLoading: state.isLoading
     };
   }
 
@@ -73,7 +115,20 @@ const daoReducer = (state, action) => {
       shares: state.shares,
       totalShares: state.totalShares,
       availableFunds: state.availableFunds,
-      proposals: action.proposals
+      proposals: action.proposals,
+      isLoading: state.isLoading
+    };
+  }
+
+  if(action.type === 'LOADING') {    
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: state.proposals,
+      isLoading: action.loading
     };
   }
   
@@ -99,15 +154,27 @@ const DaoProvider = props => {
     dispatchDaoAction({type: 'SHARES', shares: shares});
   }, []);
 
+  const updateSharesHandler = (shares) => {
+    dispatchDaoAction({type: 'UPDATESHARES', shares: shares});
+  };
+
   const loadTotalSharesHandler = useCallback(async(contract) => {
     const totalShares = await contract.methods.totalShares().call();
     dispatchDaoAction({type: 'TOTALSHARES', totalShares: totalShares});
   }, []);
 
+  const updateTotalSharesHandler = (totalShares) => {
+    dispatchDaoAction({type: 'UPDATETOTALSHARES', totalShares: totalShares});
+  };
+
   const loadAvailableFundsHandler = useCallback(async(contract) => {
     const availableFunds = await contract.methods.availableFunds().call();
     dispatchDaoAction({type: 'AVAILABLEFUNDS', availableFunds: availableFunds});
   }, []);
+
+  const updateAvailableFundsHandler = (availableFunds) => {
+    dispatchDaoAction({type: 'UPDATEAVAILABLEFUNDS', availableFunds: availableFunds});
+  };
 
   const loadProposalsHandler = useCallback(async(account, contract) => {
     const nextProposalId = parseInt(await contract.methods.nextProposalId().call());
@@ -122,6 +189,15 @@ const DaoProvider = props => {
     dispatchDaoAction({type: 'PROPOSALS', proposals: proposals});
   }, []);
 
+  // const updateProposalsHandler = (amount) => {
+  //   dispatchDaoAction({type: 'UPDATEAVAILABLEFUNDS', amount: amount});
+  // };
+
+
+  const setIsLoadingHandler = (loading) => {
+    dispatchDaoAction({type: 'LOADING', loading: loading});
+  };
+
   const daoContext = {
     contract: DaoState.contract,
     admin: DaoState.admin,
@@ -129,12 +205,17 @@ const DaoProvider = props => {
     totalShares: DaoState.totalShares,
     availableFunds: DaoState.availableFunds,
     proposals: DaoState.proposals,
+    isLoading: DaoState.isLoading,
     loadContract: loadContractHandler,
     loadAdmin: loadAdminHandler,
     loadShares: loadSharesHandler,
+    updateShares: updateSharesHandler,
     loadTotalShares: loadTotalSharesHandler,
+    updateTotalShares: updateTotalSharesHandler,
     loadAvailableFunds: loadAvailableFundsHandler,
-    loadProposals: loadProposalsHandler
+    updateAvailableFunds: updateAvailableFundsHandler,
+    loadProposals: loadProposalsHandler,
+    setIsLoading: setIsLoadingHandler
   };
   
   // const daoContext = useMemo({

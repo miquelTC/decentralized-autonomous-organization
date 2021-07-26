@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 
 import DAO from './abis/DAO.json';
 import web3 from './connection/web3';

@@ -15,9 +15,7 @@ const CreateProposal = () => {
   const [amountIsValid, setAmountIsValid] = useState(true);
 
   const [enteredRecipient, setEnteredRecipient] = useState('');
-  const [recipientIsValid, setRecipientIsValid] = useState(true);
-
-  const formIsValid = enteredName && enteredAmount > 0 && web3.utils.isAddress(enteredRecipient);
+  const [recipientIsValid, setRecipientIsValid] = useState(true);  
 
   const nameChangeHandler = (event) => {
     setEnteredName(event.target.value);
@@ -37,6 +35,8 @@ const CreateProposal = () => {
     enteredName ? setNameIsValid(true) : setNameIsValid(false);
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
     web3.utils.isAddress(enteredRecipient) ? setRecipientIsValid(true) : setRecipientIsValid(false);
+
+    const formIsValid = enteredName && enteredAmount > 0 && web3.utils.isAddress(enteredRecipient);
 
     if(formIsValid) {
       daoCtx.contract.methods.createProposal(enteredName, enteredAmount, enteredRecipient).send({from: web3Ctx.account})

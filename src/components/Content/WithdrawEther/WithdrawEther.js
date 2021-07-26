@@ -12,9 +12,7 @@ const WithdrawEther = () => {
   const [amountIsValid, setAmountIsValid] = useState(true);
 
   const [enteredRecipient, setEnteredRecipient] = useState('');
-  const [recipientIsValid, setRecipientIsValid] = useState(true);
-
-  const formIsValid = enteredAmount > 0 && web3.utils.isAddress(enteredRecipient);
+  const [recipientIsValid, setRecipientIsValid] = useState(true);  
 
   const amountChangeHandler = (event) => {
     setEnteredAmount(event.target.value);
@@ -29,6 +27,8 @@ const WithdrawEther = () => {
 
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
     web3.utils.isAddress(enteredRecipient) ? setRecipientIsValid(true) : setRecipientIsValid(false);
+
+    const formIsValid = enteredAmount > 0 && web3.utils.isAddress(enteredRecipient);
 
     if(formIsValid) {
       daoCtx.contract.methods.withdrawEther(enteredAmount, enteredRecipient).send({from: web3Ctx.account})

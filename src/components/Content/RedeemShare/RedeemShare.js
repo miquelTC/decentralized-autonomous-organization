@@ -9,7 +9,7 @@ const RedeemShare = () => {
 
   const [enteredAmount, setEnteredAmount] = useState('');
   const [amountIsValid, setAmountIsValid] = useState(true);
-
+  
   const amountChangeHandler = (event) => {
     setEnteredAmount(event.target.value);
   };
@@ -19,8 +19,8 @@ const RedeemShare = () => {
 
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
 
-    if(enteredAmount > 0) {
-      daoCtx.contract.methods.redeemShare(enteredAmount).send({from: web3Ctx.account})
+    if(enteredAmount > 0) {      
+      daoCtx.contract.methods.redeemShare(enteredAmount).send({ from: web3Ctx.account })
       .on('transactionHash', (hash) => {
         setEnteredAmount('');
         daoCtx.setIsLoading(true);
@@ -29,9 +29,9 @@ const RedeemShare = () => {
         window.alert('Something went wrong when pushing to the blockchain');
         daoCtx.setIsLoading(false);
       });
-    }    
+    }
   };
-
+  
   const amountClass = amountIsValid? "form-control" : "form-control is-invalid";
   
   return(    

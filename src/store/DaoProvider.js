@@ -278,35 +278,6 @@ const DaoProvider = props => {
     setIsLoading: setIsLoadingHandler
   };
   
-  // const daoContext = useMemo({
-  //   contract: DaoState.contract,
-  //   admin: DaoState.admin,
-  //   shares: DaoState.shares,
-  //   totalShares: DaoState.totalShares,
-  //   availableFunds: DaoState.availableFunds,
-  //   proposals: DaoState.proposals,
-  //   loadContract: loadContractHandler,
-  //   loadAdmin: loadAdminHandler,
-  //   loadShares: loadSharesHandler,
-  //   loadTotalShares: loadTotalSharesHandler,
-  //   loadAvailableFunds: loadAvailableFundsHandler,
-  //   loadProposals: loadProposalsHandler
-  // },
-  //  [
-  //   DaoState.contract, 
-  //   DaoState.admin, 
-  //   DaoState.shares, 
-  //   DaoState.totalShares, 
-  //   DaoState.availableFunds, 
-  //   DaoState.proposals, 
-  //   loadContractHandler, 
-  //   loadAdminHandler, 
-  //   loadSharesHandler,
-  //   loadTotalSharesHandler,
-  //   loadAvailableFundsHandler,
-  //   loadProposalsHandler
-  // ]);
-  
   return (
     <DaoContext.Provider value={daoContext}>
       {props.children}

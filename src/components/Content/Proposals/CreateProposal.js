@@ -31,7 +31,7 @@ const CreateProposal = () => {
     setEnteredRecipient(event.target.value);
   };
   
-  const createProposalHandler = async(event) => {
+  const createProposalHandler = (event) => {
     event.preventDefault();
 
     enteredName ? setNameIsValid(true) : setNameIsValid(false);
@@ -39,12 +39,17 @@ const CreateProposal = () => {
     web3.utils.isAddress(enteredRecipient) ? setRecipientIsValid(true) : setRecipientIsValid(false);
 
     if(formIsValid) {
-      await daoCtx.contract.methods.createProposal(enteredName, enteredAmount, enteredRecipient).send({from: web3Ctx.account});
-      await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
-      daoCtx.loadAvailableFunds(daoCtx.contract);
-      setEnteredName('');
-      setEnteredAmount('');
-      setEnteredRecipient('');
+      daoCtx.contract.methods.createProposal(enteredName, enteredAmount, enteredRecipient).send({from: web3Ctx.account})
+      .on('transactionHash', (hash) => {
+        setEnteredName('');
+        setEnteredAmount('');
+        setEnteredRecipient('');
+        daoCtx.setIsLoading(true);
+      })
+      .on('error', (error) => {
+        window.alert('Something went wrong when pushing to the blockchain');
+        daoCtx.setIsLoading(false);
+      });      
     }
   };
 

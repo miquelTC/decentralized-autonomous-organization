@@ -14,22 +14,21 @@ const Contribute = () => {
     setEnteredAmount(event.target.value);
   };
   
-  const contributeHandler = async(event) => {
+  const contributeHandler = (event) => {
     event.preventDefault();
 
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
 
     if(enteredAmount > 0) {      
       daoCtx.contract.methods.contribute().send({from: web3Ctx.account, value: enteredAmount})
-      .on('transactionhash', (hash) => {
+      .on('transactionHash', (hash) => {
         setEnteredAmount('');
         daoCtx.setIsLoading(true);
       })
       .on('error', (error) => {
         window.alert('Something went wrong when pushing to the blockchain');
         daoCtx.setIsLoading(false);
-      })
-      //daoCtx.loadAvailableFunds(daoCtx.contract);   
+      });
     }
   };
   

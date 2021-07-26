@@ -6,7 +6,7 @@ import { ProgressBar } from "react-bootstrap";
 const MyShares = () => {
   const daoCtx = useContext(DaoContext);
 
-  const now = ((daoCtx.shares / daoCtx.totalShares) * 100).toFixed(1);
+  const now = daoCtx.totalShares > 0 ? ((daoCtx.shares / daoCtx.totalShares) * 100).toFixed(1) : 0;
   
   return(
     <React.Fragment>

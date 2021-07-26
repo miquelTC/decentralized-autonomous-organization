@@ -8,13 +8,25 @@ const Proposals = () => {
   const daoCtx = useContext(DaoContext);
   
   const vote = async(event) => {
-    await daoCtx.contract.methods.vote(event.target.value).send({from: web3Ctx.account});
-    await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
+    daoCtx.contract.methods.vote(event.target.value).send({from: web3Ctx.account})
+    .on('transactionHash', (hash) => {
+      daoCtx.setIsLoading(true);
+    })
+    .on('error', (error) => {
+      window.alert('Something went wrong when pushing to the blockchain');
+      daoCtx.setIsLoading(false);
+    });
   };
 
-  const executeProposal = async(event) => {
-    await daoCtx.contract.methods.executeProposal(event.target.value).send({from: web3Ctx.account});
-    await daoCtx.loadProposals(web3Ctx.account, daoCtx.contract);
+  const executeProposal = (event) => {
+    daoCtx.contract.methods.executeProposal(event.target.value).send({from: web3Ctx.account})
+    .on('transactionHash', (hash) => {
+      daoCtx.setIsLoading(true);
+    })
+    .on('error', (error) => {
+      window.alert('Something went wrong when pushing to the blockchain');
+      daoCtx.setIsLoading(false);
+    });
   };
 
   const isFinished = (proposal) => {

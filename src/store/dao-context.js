@@ -18,6 +18,8 @@ const DaoContext = React.createContext({
   updateAvailableFunds: () => {},
   loadProposals: () => {},
   updateProposals: () => {},
+  updateVotes: () => {},
+  updateExecutedProposal: () => {},
   setIsLoading: () => {}
 });
 

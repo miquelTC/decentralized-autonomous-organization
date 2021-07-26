@@ -120,6 +120,56 @@ const daoReducer = (state, action) => {
     };
   }
 
+  if(action.type === 'UPDATEPROPOSALS') {    
+    const proposals = [...state.proposals, {...action.proposal, hasVoted: false}];
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: proposals,
+      isLoading: state.isLoading
+    };
+  }
+
+  if(action.type === 'UPDATEVOTES') {    
+    const proposals = state.proposals.map(proposal => {
+      if(proposal.id === action.proposal.id) {
+        proposal.votes = action.proposal.votes;
+        proposal.hasVoted = true;
+      }
+      return proposal;
+    });
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: proposals,
+      isLoading: state.isLoading
+    };
+  }
+
+  if(action.type === 'UPDATEEXECUTEDPROPOSAL') {    
+    const proposals = state.proposals.map(proposal => {
+      if(proposal.id === action.proposal.id) {
+        proposal.executed = true;
+      }
+      return proposal;
+    });
+    return {
+      contract: state.contract,
+      admin: state.admin,
+      shares: state.shares,
+      totalShares: state.totalShares,
+      availableFunds: state.availableFunds,
+      proposals: proposals,
+      isLoading: state.isLoading
+    };
+  }
+
   if(action.type === 'LOADING') {    
     return {
       contract: state.contract,
@@ -189,10 +239,17 @@ const DaoProvider = props => {
     dispatchDaoAction({type: 'PROPOSALS', proposals: proposals});
   }, []);
 
-  // const updateProposalsHandler = (amount) => {
-  //   dispatchDaoAction({type: 'UPDATEAVAILABLEFUNDS', amount: amount});
-  // };
+  const updateProposalsHandler = (proposal) => {
+    dispatchDaoAction({type: 'UPDATEPROPOSALS', proposal: proposal});
+  };
 
+  const updateVotesHandler = (proposal) => {
+    dispatchDaoAction({type: 'UPDATEVOTES', proposal: proposal});
+  };
+
+  const updateExecutedProposalHandler = (proposalId) => {
+    dispatchDaoAction({type: 'UPDATEEXECUTEDPROPOSAL', proposalId: proposalId});
+  };
 
   const setIsLoadingHandler = (loading) => {
     dispatchDaoAction({type: 'LOADING', loading: loading});
@@ -215,6 +272,9 @@ const DaoProvider = props => {
     loadAvailableFunds: loadAvailableFundsHandler,
     updateAvailableFunds: updateAvailableFundsHandler,
     loadProposals: loadProposalsHandler,
+    updateProposals: updateProposalsHandler,
+    updateVotes: updateVotesHandler,
+    updateExecutedProposal: updateExecutedProposalHandler,
     setIsLoading: setIsLoadingHandler
   };
   

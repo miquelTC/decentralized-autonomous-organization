@@ -12,8 +12,8 @@ function App() {
   const web3Ctx = useContext(Web3Context);
   const daoCtx = useContext(DaoContext);
 
-  const { account, loadAccount, loadNetworkId } = web3Ctx;
-  const { contract, loadContract, admin, loadAdmin, loadShares, updateShares, loadTotalShares, updateTotalShares, loadAvailableFunds, loadProposals, isLoading, setIsLoading } = daoCtx;
+  const { account } = web3Ctx;
+  const { contract, loadShares, loadTotalShares, loadAvailableFunds, loadProposals } = daoCtx;
 
   useEffect(() => {
     // Check if the user has Metamask active
@@ -32,25 +32,49 @@ function App() {
       }
       
       // Load account
-      loadAccount(web3);
+      web3Ctx.loadAccount(web3);
 
       // Load Network ID
-      const networkId = await loadNetworkId(web3);
+      const networkId = await web3Ctx.loadNetworkId(web3);
       const deployedNetwork = DAO.networks[networkId];
 
       // Load contract
-      const contract = loadContract(web3, DAO, deployedNetwork);
+      const contract = daoCtx.loadContract(web3, DAO, deployedNetwork);
       if(contract) {
         // Load admin
-        loadAdmin(contract);
-        setIsLoading(false);
+        daoCtx.loadAdmin(contract);
+        daoCtx.setIsLoading(false);
 
         // Subscribe to Shares Event
         contract.events.Shares({}, (error, event) => {
-          updateShares(event.returnValues.shares);
-          updateTotalShares(event.returnValues.totalShares);
-          setIsLoading(false);
-        });      
+          daoCtx.updateShares(event.returnValues.shares);
+          daoCtx.updateTotalShares(event.returnValues.totalShares);
+          daoCtx.setIsLoading(false);
+        });
+        
+        // Subscribe to Funds Event
+        contract.events.Funds({}, (error, event) => {
+          daoCtx.updateAvailableFunds(event.returnValues.availableFunds);
+          daoCtx.setIsLoading(false);
+        });
+
+        // Subscribe to NewProposal Event
+        contract.events.NewProposal({}, (error, event) => {
+          daoCtx.updateProposals(event.returnValues);
+          daoCtx.setIsLoading(false);
+        });
+
+        // Subscribe to Votes Event
+        contract.events.Votes({}, (error, event) => {
+          daoCtx.updateVotes(event.returnValues);
+          daoCtx.setIsLoading(false);
+        });
+
+        // Subscribe to ExecuteProposal Event
+        contract.events.ExecuteProposal({}, (error, event) => {
+          daoCtx.updateExecutedProposal(event.returnValues);
+          daoCtx.setIsLoading(false);
+        });
       } else {
         window.alert('DAO contract not deployed to detected network.')
       }
@@ -60,7 +84,7 @@ function App() {
     
     // Metamask Event Subscription - Account changed
     window.ethereum.on('accountsChanged', (accounts) => {
-      loadAccount(web3);
+      web3Ctx.loadAccount(web3);
     });
 
     // Metamask Event Subscription - Network changed
@@ -69,7 +93,7 @@ function App() {
     });
   }, []);
 
-  const showContent = web3 && account && contract && admin;
+  const showContent = web3 && account && contract && daoCtx.admin;
   
   useEffect(() => {
     if(showContent) {      
@@ -88,8 +112,8 @@ function App() {
   return (    
     <div className="bg-dark">
       <Navbar />      
-      {showContent && !isLoading && <Main />}
-      {isLoading && <Spinner />}
+      {showContent && !daoCtx.isLoading && <Main />}
+      {daoCtx.isLoading && <Spinner />}
     </div>
   );
 };

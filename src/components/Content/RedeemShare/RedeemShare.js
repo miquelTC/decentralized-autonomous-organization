@@ -14,17 +14,21 @@ const RedeemShare = () => {
     setEnteredAmount(event.target.value);
   };
   
-  const redeemShareHandler = async(event) => {
+  const redeemShareHandler = (event) => {
     event.preventDefault();
 
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
 
     if(enteredAmount > 0) {
-      await daoCtx.contract.methods.redeemShare(enteredAmount).send({from: web3Ctx.account});
-      await daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
-      await daoCtx.loadTotalShares(daoCtx.contract);
-      daoCtx.loadAvailableFunds(daoCtx.contract);
-      setEnteredAmount(''); 
+      daoCtx.contract.methods.redeemShare(enteredAmount).send({from: web3Ctx.account})
+      .on('transactionHash', (hash) => {
+        setEnteredAmount('');
+        daoCtx.setIsLoading(true);
+      })
+      .on('error', (error) => {
+        window.alert('Something went wrong when pushing to the blockchain');
+        daoCtx.setIsLoading(false);
+      });
     }    
   };
 

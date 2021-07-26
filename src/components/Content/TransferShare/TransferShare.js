@@ -24,18 +24,23 @@ const TransferShare = () => {
     setEnteredRecipient(event.target.value);
   };
   
-  const transferShareHandler = async(event) => {
+  const transferShareHandler = (event) => {
     event.preventDefault();
 
     enteredAmount > 0 ? setAmountIsValid(true) : setAmountIsValid(false);
     web3.utils.isAddress(enteredRecipient) ? setRecipientIsValid(true) : setRecipientIsValid(false);
 
     if(formIsValid) {
-      await daoCtx.contract.methods.transferShare(enteredAmount, enteredRecipient).send({from: web3Ctx.account});
-      daoCtx.loadShares(web3Ctx.account, daoCtx.contract);
-      daoCtx.loadTotalShares(daoCtx.contract);
-      setEnteredAmount('');
-      setEnteredRecipient('');
+      daoCtx.contract.methods.transferShare(enteredAmount, enteredRecipient).send({from: web3Ctx.account})
+      .on('transactionHash', (hash) => {
+        setEnteredAmount('');
+        setEnteredRecipient('');
+        daoCtx.setIsLoading(true);
+      })
+      .on('error', (error) => {
+        window.alert('Something went wrong when pushing to the blockchain');
+        daoCtx.setIsLoading(false);
+      });      
     }    
   };
 

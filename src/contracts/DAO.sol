@@ -34,6 +34,18 @@ contract DAO {
   address public admin;
 
   event Shares(uint shares, uint totalShares);
+  event Funds(uint availableFunds);
+  event Votes(uint id, uint votes);
+  event ExecuteProposal(uint id);
+  event NewProposal(
+    uint id,
+    string name,
+    uint amount,
+    address payable recipient,
+    uint votes,
+    uint end,
+    bool executed
+  );
 
   constructor(uint contributionTime, uint _voteTime, uint _quorum) {
     require(_quorum > 0 && _quorum < 100, 'quorum must be between 0 and 100');
@@ -50,6 +62,7 @@ contract DAO {
     totalShares += msg.value;
     availableFunds += msg.value;
     emit Shares(shares[msg.sender], totalShares);
+    emit Funds(availableFunds);
   }
 
   function redeemShare(uint amount) external {
@@ -60,6 +73,7 @@ contract DAO {
     availableFunds -= amount;
     payable(msg.sender).transfer(amount);
     emit Shares(shares[msg.sender], totalShares);
+    emit Funds(availableFunds);
   }
 
   function transferShare(uint amount, address to) external {
@@ -80,9 +94,11 @@ contract DAO {
       0,
       block.timestamp + voteTime,
       false
-    );
-    nextProposalId ++;
+    );    
     availableFunds -= amount;
+    emit Funds(availableFunds);
+    emit NewProposal(nextProposalId, name, amount, recipient, 0, block.timestamp + voteTime, false);
+    nextProposalId ++;
   }
 
   function vote(uint proposalId) external onlyInvestors() {
@@ -91,6 +107,7 @@ contract DAO {
     require(block.timestamp < proposal.end, 'can only vote until proposal end date');
     votes[msg.sender][proposalId] = true;
     proposal.votes += shares[msg.sender];
+    emit Votes(proposalId, proposal.votes);
   }
 
   function executeProposal(uint proposalId) external onlyAdmin {
@@ -100,11 +117,13 @@ contract DAO {
     require((proposal.votes * 100 / totalShares) >= quorum, 'cannot execute proposal with votes # below quorum');
     _transferEther(proposal.amount, proposal.recipient);
     proposal.executed = true;
+    emit ExecuteProposal(proposalId);
   }
 
   function withdrawEther(uint amount, address payable to) external onlyAdmin {    
     availableFunds -= amount;
     _transferEther(amount, to);
+    emit Funds(availableFunds);
   }
 
   function _transferEther(uint amount, address payable to) internal {
@@ -115,6 +134,7 @@ contract DAO {
   // For ether returns of proposal investment
   receive() external payable {
     availableFunds += msg.value;
+    emit Funds(availableFunds);
   }
 
   modifier onlyInvestors() {

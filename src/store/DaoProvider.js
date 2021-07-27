@@ -229,7 +229,7 @@ const DaoProvider = props => {
   const loadProposalsHandler = useCallback(async(account, contract) => {
     const nextProposalId = parseInt(await contract.methods.nextProposalId().call());
     const proposals = [];
-    for(let i = 0; i < nextProposalId; i++) { 
+    for(let i = nextProposalId - 1; i >= 0; i--) { 
       const [proposal, hasVoted] = await Promise.all([
         contract.methods.proposals(i).call(),
         contract.methods.votes(account, i).call()

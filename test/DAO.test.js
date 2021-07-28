@@ -226,14 +226,17 @@ contract('DAO', (accounts) => {
       );
     });
 
-    it('Emits Event ExecuteProposal', async() => {
+    it('Emits Event Funds and ExecuteProposal', async() => {
       await dao.createProposal('proposal 6', 50, accounts[8], {from: investor1});
       await dao.vote(5, {from: investor1});
       await dao.vote(5, {from: investor3});
       await time.increase(2001);
       const result = await dao.executeProposal(5);
-      const event = result.logs[0].args;
-      assert(event.status.toNumber() === 1);
+      const availableFunds = await dao.availableFunds();
+      const eventFund = result.logs[0].args;
+      const eventExecuteProposal = result.logs[1].args;
+      assert(eventFund.availableFunds.toNumber() === availableFunds.toNumber());
+      assert(eventExecuteProposal.status.toNumber() === 1);
     });
   });
 

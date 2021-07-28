@@ -51,7 +51,7 @@ const Proposals = () => {
               <th>Votes</th>
               <th>Vote</th>
               <th>Ends on</th>
-              <th>Executed</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -78,16 +78,18 @@ const Proposals = () => {
                   {(new Date(parseInt(proposal.end) * 1000)).toLocaleString()}
                 </td>
                 <td>
-                  {proposal.executed ? 'Yes' : (
-                    daoCtx.admin.toLowerCase() === web3Ctx.account.toLowerCase() ? (
-                      <button 
-                        value={proposal.id}  
-                        onClick={executeProposal}
-                        type="submit" 
-                        className="btn btn-primary">
-                        Execute
-                      </button>
-                    ) : 'No' 
+                  {proposal.status === '1' ? 'Executed' : (
+                    proposal.status === '2' ? 'Rejected' : (
+                      !isFinished(proposal) ? 'Voting' : (
+                        <button 
+                          value={proposal.id}  
+                          onClick={executeProposal}
+                          type="submit" 
+                          className="btn btn-primary">
+                          Execute
+                        </button>
+                      )                 
+                    )
                   )}
                 </td>
               </tr>

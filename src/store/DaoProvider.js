@@ -121,7 +121,7 @@ const daoReducer = (state, action) => {
   }
 
   if(action.type === 'UPDATEPROPOSALS') {    
-    const proposals = [...state.proposals, {...action.proposal, hasVoted: false}];
+    const proposals = [{...action.proposal, hasVoted: false}, ...state.proposals];
     return {
       contract: state.contract,
       admin: state.admin,
@@ -155,7 +155,7 @@ const daoReducer = (state, action) => {
   if(action.type === 'UPDATEEXECUTEDPROPOSAL') {    
     const proposals = state.proposals.map(proposal => {
       if(proposal.id === action.proposal.id) {
-        proposal.executed = true;
+        proposal.status = action.proposal.status;
       }
       return proposal;
     });
@@ -247,8 +247,8 @@ const DaoProvider = props => {
     dispatchDaoAction({type: 'UPDATEVOTES', proposal: proposal});
   };
 
-  const updateExecutedProposalHandler = (proposalId) => {
-    dispatchDaoAction({type: 'UPDATEEXECUTEDPROPOSAL', proposalId: proposalId});
+  const updateExecutedProposalHandler = (proposal) => {
+    dispatchDaoAction({type: 'UPDATEEXECUTEDPROPOSAL', proposal: proposal});
   };
 
   const setIsLoadingHandler = (loading) => {

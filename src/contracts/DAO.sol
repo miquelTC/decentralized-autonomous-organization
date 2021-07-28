@@ -111,6 +111,7 @@ contract DAO {
       availableFunds += proposal.amount;
       proposal.status = Status.rejected;
     }    
+    emit Funds(availableFunds);
     emit ExecuteProposal(proposalId, proposal.status);
   }
 

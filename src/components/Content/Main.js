@@ -18,7 +18,7 @@ const Main = () => {
         <AvailableFunds />
       </div>
       <WithdrawEther />
-      <div className="row justify-content-between">
+      <div className="row">
         <Contribute />
         <TransferShare />
         <RedeemShare />

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import { useReducer } from 'react';
 
 import Web3Context from './web3-context';
 
@@ -36,10 +36,9 @@ const Web3Provider = props => {
   };
 
   const loadNetworkIdHandler = async(web3) => {
-      const networkId = await web3.eth.net.getId();
-      dispatchWeb3Action({type: 'NETWORKID', networkId: networkId});
-      return networkId;
-   
+    const networkId = await web3.eth.net.getId();
+    dispatchWeb3Action({type: 'NETWORKID', networkId: networkId});
+    return networkId;   
   };
   
   const web3Context = {

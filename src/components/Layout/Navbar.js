@@ -19,6 +19,18 @@ const Navbar = () => {
     // Load accounts
     web3Ctx.loadAccount(web3);
   };
+
+  let etherscanUrl;
+
+  if(web3Ctx.networkId === 3) {
+    etherscanUrl = 'https://ropsten.etherscan.io'
+  } else if(web3Ctx.networkId === 4) {
+    etherscanUrl = 'https://rinkeby.etherscan.io'
+  } else if(web3Ctx.networkId === 5) {
+    etherscanUrl = 'https://goerli.etherscan.io'
+  } else {
+    etherscanUrl = 'https://etherscan.io'
+  }
   
   return (
     <nav className="navbar navbar-dark bg-primary p-0">
@@ -31,7 +43,7 @@ const Navbar = () => {
           {web3Ctx.account && 
             <a 
               className="nav-link small" 
-              href={`https://etherscan.io/address/${web3Ctx.account}`}
+              href={`${etherscanUrl}/address/${web3Ctx.account}`}
               target="blank"
               rel="noopener noreferrer"
             >

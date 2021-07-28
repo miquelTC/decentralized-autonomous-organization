@@ -76,6 +76,7 @@ function App() {
           daoCtx.setIsLoading(false);
         });
       } else {
+        daoCtx.setIsLoading(false);
         window.alert('DAO contract not deployed to detected network.')
       }
     };      

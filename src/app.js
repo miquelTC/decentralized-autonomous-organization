@@ -46,34 +46,55 @@ function App() {
         daoCtx.setIsLoading(false);
 
         // Subscribe to Shares Event
-        contract.events.Shares({fromBlock:'latest'}, (error, event) => {
+        contract.events.Shares()
+        .on('data', (event) => {
           daoCtx.updateShares(event.returnValues.shares);
           daoCtx.updateTotalShares(event.returnValues.totalShares);
           daoCtx.setIsLoading(false);
-        });
+        })
+        .on('error', (error) => {
+          console.log(error);
+        });          
+          
         
         // Subscribe to Funds Event
-        contract.events.Funds({fromBlock:'latest'}, (error, event) => {
+        contract.events.Funds()
+        .on('data', (event) => {
           daoCtx.updateAvailableFunds(event.returnValues.availableFunds);
           daoCtx.setIsLoading(false);
+        })
+        .on('error', (error) => {
+          console.log(error);
         });
 
         // Subscribe to NewProposal Event
-        contract.events.NewProposal({fromBlock:'latest'}, (error, event) => {
+        contract.events.NewProposal()
+        .on('data', (event) => {
           daoCtx.updateProposals(event.returnValues);
-          daoCtx.setIsLoading(false);
+          daoCtx.setIsLoading(false); 
+        })
+        .on('error', (error) => {
+          console.log(error);
         });
 
         // Subscribe to Votes Event
-        contract.events.Votes({fromBlock:'latest'}, (error, event) => {
+        contract.events.Votes()
+        .on('data', (event) => {
           daoCtx.updateVotes(event.returnValues);
           daoCtx.setIsLoading(false);
+        })
+        .on('error', (error) => {
+          console.log(error);
         });
 
         // Subscribe to ExecuteProposal Event
-        contract.events.ExecuteProposal({fromBlock:'latest'}, (error, event) => {
+        contract.events.ExecuteProposal()
+        .on('data', (event) => {
           daoCtx.updateExecutedProposal(event.returnValues);
           daoCtx.setIsLoading(false);
+        })
+        .on('error', (error) => {
+          console.log(error);
         });
       } else {
         daoCtx.setIsLoading(false);

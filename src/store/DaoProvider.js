@@ -120,7 +120,7 @@ const daoReducer = (state, action) => {
     };
   }
 
-  if(action.type === 'UPDATEPROPOSALS') {    
+  if(action.type === 'UPDATEPROPOSALS') {
     const proposals = [{...action.proposal, hasVoted: false}, ...state.proposals];
     return {
       contract: state.contract,

@@ -46,32 +46,32 @@ function App() {
         daoCtx.setIsLoading(false);
 
         // Subscribe to Shares Event
-        contract.events.Shares({}, (error, event) => {
+        contract.events.Shares({fromBlock:'latest'}, (error, event) => {
           daoCtx.updateShares(event.returnValues.shares);
           daoCtx.updateTotalShares(event.returnValues.totalShares);
           daoCtx.setIsLoading(false);
         });
         
         // Subscribe to Funds Event
-        contract.events.Funds({}, (error, event) => {
+        contract.events.Funds({fromBlock:'latest'}, (error, event) => {
           daoCtx.updateAvailableFunds(event.returnValues.availableFunds);
           daoCtx.setIsLoading(false);
         });
 
         // Subscribe to NewProposal Event
-        contract.events.NewProposal({}, (error, event) => {
+        contract.events.NewProposal({fromBlock:'latest'}, (error, event) => {
           daoCtx.updateProposals(event.returnValues);
           daoCtx.setIsLoading(false);
         });
 
         // Subscribe to Votes Event
-        contract.events.Votes({}, (error, event) => {
+        contract.events.Votes({fromBlock:'latest'}, (error, event) => {
           daoCtx.updateVotes(event.returnValues);
           daoCtx.setIsLoading(false);
         });
 
         // Subscribe to ExecuteProposal Event
-        contract.events.ExecuteProposal({}, (error, event) => {
+        contract.events.ExecuteProposal({fromBlock:'latest'}, (error, event) => {
           daoCtx.updateExecutedProposal(event.returnValues);
           daoCtx.setIsLoading(false);
         });

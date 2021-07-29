@@ -121,7 +121,15 @@ const daoReducer = (state, action) => {
   }
 
   if(action.type === 'UPDATEPROPOSALS') {
-    const proposals = [{...action.proposal, hasVoted: false}, ...state.proposals];
+    // Prevent duplicate Proposals if Event triggered twice
+    const index = state.proposals.findIndex(proposal => proposal.id === action.proposal.id);
+    let proposals = [];
+    if(index === -1) {
+      proposals = [{...action.proposal, hasVoted: false}, ...state.proposals];
+    } else {
+      proposals = [...state.proposals];
+    }
+    
     return {
       contract: state.contract,
       admin: state.admin,
